@@ -1,7 +1,7 @@
 
 ### Status ###
 HELP.md
-target/
+/target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/java/**
 !**/src/test/**
@@ -16,7 +16,7 @@ target/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea
+/.idea/
 *.iws
 *.iml
 *.ipr
@@ -27,7 +27,7 @@ target/
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
+/build/
 
 ### VS Code ###
 .vscode/
