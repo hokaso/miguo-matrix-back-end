@@ -1,8 +1,8 @@
 package com.miguo.matrix.entity.miniprogram;
 
+import com.miguo.matrix.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,12 +17,11 @@ import javax.persistence.Table;
  * @date 2019-11-28 10:13
  */
 @Slf4j
-@Data
 @Entity
 @Accessors(chain = true)
 @ApiModel("小程序活动实体")
 @Table(name = "vote_activities")
-public class Activity {
+public class Activity extends BaseEntity {
 
     @Column(name = "activity_name")
     @ApiModelProperty("活动名称")
