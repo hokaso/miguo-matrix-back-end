@@ -1,6 +1,6 @@
-package com.miguo.matrix.repository;
+package com.miguo.matrix.repository.staff;
 
-import com.miguo.matrix.entity.Account;
+import com.miguo.matrix.entity.staff.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author Hocassian
@@ -16,17 +15,20 @@ import java.util.List;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, String> {
 
-    //    @Query(value = "select * from com_staff where nickname LIKE %?%" ,nativeQuery = true)
-    //    public List<Account> findByNameLike(String name);
     /**
      * 功能描述：模糊查询
      *
      * @param nickname
-     * @return
+     * @return Account
      */
     Account findByNickname(String nickname);
 
-    // 软删除某一个用户
+    /**
+     * 功能描述：软删除某一个用户
+     *
+     * @param id updateAt
+     * @return void
+     */
     @Modifying
     @Transactional
     @Query(value = "update com_staff set is_del = true , update_At = :#{#updateAt} where id = :#{#id}",nativeQuery = true)

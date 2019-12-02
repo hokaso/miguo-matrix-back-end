@@ -1,7 +1,7 @@
-package com.miguo.matrix.service;
+package com.miguo.matrix.service.staff;
 
-import com.miguo.matrix.entity.Account;
-import com.miguo.matrix.repository.AccountRepository;
+import com.miguo.matrix.entity.staff.Account;
+import com.miguo.matrix.repository.staff.AccountRepository;
 import com.miguo.matrix.utils.SnowflakeIdWorker;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +24,6 @@ public class AccountService {
     @Autowired
     private SnowflakeIdWorker snowflakeIdWorker;
 
-//    public AccountService(AccountRepository accountRepository, SnowflakeIdWorker snowflakeIdWorker) {
-//        this.accountRepository = accountRepository;
-//        this.snowflakeIdWorker = snowflakeIdWorker;
-//    }
 
     /**
      * 新增用户

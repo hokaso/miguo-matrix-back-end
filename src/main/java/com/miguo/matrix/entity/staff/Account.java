@@ -1,5 +1,6 @@
-package com.miguo.matrix.entity;
+package com.miguo.matrix.entity.staff;
 
+import com.miguo.matrix.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
@@ -23,7 +24,7 @@ import javax.persistence.Table;
 @Accessors(chain = true)
 @ApiModel("员工实体")
 @Table(name = "com_staff")
-public class Account extends BaseEntity{
+public class Account extends BaseEntity {
 
     @Column(name = "password")
     @ApiModelProperty("密码")

@@ -14,11 +14,5 @@ spring:
     properties:
       hibernate:
         ddl-auto: none
-  redis:
-    host: 127.0.0.1
-    port: 32768
-    password:
-    database: 0
-
 file:
   path:

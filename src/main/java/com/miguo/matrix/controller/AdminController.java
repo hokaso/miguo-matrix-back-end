@@ -1,8 +1,8 @@
 package com.miguo.matrix.controller;
 
 import com.miguo.matrix.dto.Result;
-import com.miguo.matrix.entity.Account;
-import com.miguo.matrix.service.AccountService;
+import com.miguo.matrix.entity.staff.Account;
+import com.miguo.matrix.service.staff.AccountService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
