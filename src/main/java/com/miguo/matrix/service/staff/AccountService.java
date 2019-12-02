@@ -65,7 +65,7 @@ public class AccountService {
     }
 
     /**
-     * 登陆：判断是否有该用户
+     * 注册：判断是否有该用户
      */
     public boolean exist(String nickname){
         if(accountRepository.findByNickname(nickname)== null){

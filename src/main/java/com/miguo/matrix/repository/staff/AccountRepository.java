@@ -16,7 +16,7 @@ import java.util.Date;
 public interface AccountRepository extends JpaRepository<Account, String> {
 
     /**
-     * 功能描述：模糊查询
+     * 功能描述：查询
      *
      * @param nickname
      * @return Account
@@ -33,4 +33,5 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     @Transactional
     @Query(value = "update com_staff set is_del = true , update_At = :#{#updateAt} where id = :#{#id}",nativeQuery = true)
     void deleteById(String id,Date updateAt);
+
 }

@@ -34,16 +34,7 @@ public class AdminController  {
      */
     @ApiOperation(value = "登录")
     @PostMapping("/login")
-    public Result<Account> login(@RequestBody Account account){
-
-        if(!accountService.exist(account.getNickname())){
-            return new Result(HttpStatus.OK, "用户不存在！", null);
-        }else {
-            if(account.getPassword().equals(accountService.password(account.getNickname()))){
-                return new Result(HttpStatus.OK, "登陆成功！", null);
-            }else {
-                return new Result(HttpStatus.OK, "密码错误！", null);
-            }
-        }
+    public Result<String> login(@RequestBody Account account){
+        return null;
     }
 }

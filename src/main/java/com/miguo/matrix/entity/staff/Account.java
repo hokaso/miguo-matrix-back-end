@@ -30,10 +30,12 @@ public class Account extends BaseEntity {
     @ApiModelProperty("密码")
     private String password;
 
+    // 用户的名称，不唯一
     @Column(name = "name")
     @ApiModelProperty("姓名")
     private String name;
 
+    // 昵称就是登陆账号，唯一
     @Column(name = "nickname")
     @ApiModelProperty("昵称")
     private String nickname;
