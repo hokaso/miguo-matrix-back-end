@@ -46,5 +46,6 @@ public class Video extends BaseEntity {
 
     @Column(name = "video_date")
     @ApiModelProperty("创作日期")
+    //    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date videoDate;
 }

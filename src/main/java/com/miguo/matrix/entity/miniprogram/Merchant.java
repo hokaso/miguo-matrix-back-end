@@ -3,8 +3,10 @@ package com.miguo.matrix.entity.miniprogram;
 import com.miguo.matrix.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +18,8 @@ import javax.persistence.Table;
  * @author Hocassian
  * @date 2019-11-28 10:21
  */
+@EqualsAndHashCode(callSuper = true)
+@Data
 @Slf4j
 @Entity
 @Accessors(chain = true)
