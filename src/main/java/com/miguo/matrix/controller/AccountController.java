@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/account")
-public class AccountController extends BaseController {
+public class AccountController  {
 
     @Autowired
     private AccountService accountService;
