@@ -1,4 +1,4 @@
-package com.miguo.matrix.entity.miniprogram;
+package com.miguo.matrix.entity.client;
 
 import com.miguo.matrix.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
@@ -16,22 +16,22 @@ import javax.persistence.Table;
  * 功能描述：
  *
  * @author Hocassian
- * @date 2019-11-28 10:13
+ * @date 2019-11-28 11:47
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Slf4j
 @Entity
 @Accessors(chain = true)
-@ApiModel("小程序活动实体")
-@Table(name = "vote_activities")
-public class Activity extends BaseEntity {
+@ApiModel("文章实体")
+@Table(name = "client_article")
+public class Article extends BaseEntity {
 
-    @Column(name = "activity_name")
-    @ApiModelProperty("活动名称")
-    private String activityName;
+    @Column(name = "article")
+    @ApiModelProperty("正文")
+    private String article;
 
-    @Column(name = "activity_profile")
-    @ApiModelProperty("活动简介")
-    private String activityProfile;
+    @Column(name = "title")
+    @ApiModelProperty("标题")
+    private String title;
 }

@@ -2,10 +2,11 @@ package com.miguo.matrix.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import lombok.Data;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -16,8 +17,8 @@ import javax.persistence.Table;
  * @author Hocassian
  */
 @EqualsAndHashCode(callSuper = true)
-@Slf4j
 @Data
+@Slf4j
 @Entity
 @Accessors(chain = true)
 @ApiModel("员工实体")
