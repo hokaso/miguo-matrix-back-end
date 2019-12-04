@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * @author Hocassian
@@ -24,54 +25,74 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/account")
 public class AccountController {
     /*
-    * 需要实现：
-    * 1.增删改员工
-    * 2.查单个员工
-    * 3.查全部查员工
-    * */
+     * 需要实现：
+     * 1.增删改员工
+     * */
     @Autowired
     private AccountService accountService;
 
-    /***************新增员工模块*************/
-    @ApiOperation(value = "新增")
+    // 分页查询所有员工
+    @ApiOperation(value = "分页查询所有员工")
+    @GetMapping("/findAll/{page}/{size}")
+    public Result<PageResult<Account>> findAll(@PathVariable("page") int page, @PathVariable("size") int size) {
+        Result<PageResult<Account>> result = new Result<>();
+        page--;
+        try {
+            Page<Account> accountPage = accountService.findAll(page, size);
+            PageResult<Account> pageResult = new PageResult<>();
+            pageResult.setData(accountPage.getContent());
+            page++;
+            pageResult.setPage(page).setSize(size).setTotal(accountPage.getTotalElements());
+            result.setData(pageResult).setMessage("success").setCode(HttpStatus.OK);
+        } catch (Exception e) {
+            result.setData(null).setMessage("fail").setCode(HttpStatus.OK);
+        }
+
+        return result;
+    }
+
+    // 找某一个员工的信息
+    @ApiOperation(value = "通过nickname找员工信息")
+    @GetMapping("/findOne/{nickname}")
+    public Result<Account> findOne(@PathVariable("nickname") String nickname) {
+        Result<Account> result = new Result<>();
+        try {
+            Account account = accountService.findOne(nickname);
+            result.setCode(HttpStatus.OK).setMessage("success").setData(account);
+        } catch (Exception e) {
+            result.setCode(HttpStatus.OK).setMessage("fail").setData(null);
+        }
+        return result;
+    }
+
+    @ApiOperation(value = "增加员工")
     @PostMapping("/add")
     public Result<String> add(@RequestBody Account account) {
-        accountService.add(account);
-        return new Result(HttpStatus.OK, "新增成功！", "success");
-    }
+        Result<String> result = new Result<>();
+        result.setCode(HttpStatus.OK);
+        try {
+            accountService.add(account);
+            result.setMessage("success").setData("success");
 
-    /***************删除员工模块*************/
-    @ApiOperation(value = "删除")
-    @DeleteMapping("/del")
-    public Result<String> del(String id) {
-        accountService.del(id);
-        return new Result(HttpStatus.OK, "删除成功！", "success");
-    }
-
-    /***************查询员工模块*************/
-    @ApiOperation(value = "分页查询所有员工")
-    @PostMapping("/find/{page}/{size}")
-    public Result<Account> selectAll(@PathVariable("page") Integer pageNumber, @PathVariable("size") Integer pageSize) {
-        Page page = accountService.select(pageNumber, pageSize);
-        PageResult<Account> pageResult = new PageResult(page.getNumber() + 1, page.getSize(), page.getTotalElements(), page.getContent());
-        Result<Account> result = new Result(HttpStatus.OK, "success", pageResult);
+        } catch (Exception e) {
+            result.setMessage("fail").setData("fail");
+        }
         return result;
     }
 
-    @ApiOperation(value = "查找某一个员工")
-    public Result<Account> selectOne() {
-        Result<Account> result = new Result<>();
-        result.setCode(HttpStatus.OK).setMessage("success").setData(null);
-        return result;
+    @ApiOperation(value = "修改员工名称")
+    @PutMapping("/update_name")
+    public Result<String> updateName(@RequestBody String name) {
+        System.out.println(name);
 
+        return null;
     }
 
-    /***************修改员工模块*************/
-    @ApiOperation(value = "修改")
-    @PutMapping("/update")
-    public Result<String> update(@RequestBody Account account) {
-        accountService.update(account);
-        return new Result(HttpStatus.OK, "更新成功！", "success");
+    @ApiOperation(value = "删除某个员工")
+    @DeleteMapping("/delete/{nickname}")
+    public Result<String> delete(@PathVariable("nickname") String nickname) {
+        return null;
     }
+
 
 }

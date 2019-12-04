@@ -2,24 +2,29 @@ package com.miguo.matrix.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @author Hocassian
  */
-@Slf4j
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Accessors(chain = true)
 @MappedSuperclass
 public abstract class BaseEntity implements Serializable {
 
     @Id
-    @Column(name = "id")
     private String id;
 
     @ApiModelProperty("创建人员")

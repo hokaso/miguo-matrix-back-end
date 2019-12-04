@@ -11,9 +11,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 /**
- * @author Hocassian
+ * @author Noah
  */
 @Service
 public class AccountService {
@@ -24,61 +25,70 @@ public class AccountService {
     @Autowired
     private SnowflakeIdWorker snowflakeIdWorker;
 
+    // 根据分页查找所有
+    public Page<Account> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Account> account = accountRepository.findAllAccount(pageable);
+        return account;
+    }
 
-    /**
-     * 新增用户
-     */
+    // 同过nickname查找某一个用户
+    public Account findOne(String nickname) {
+        return accountRepository.findByNickname(nickname);
+    }
+
+    // 添加用户
     public void add(Account account) {
-        account.setId(Long.toString(snowflakeIdWorker.nextId()));
-        account.setCreateBy("");
         account.setCreateAt(new Date());
-        account.setUpdateBy("");
         account.setUpdateAt(new Date());
+        account.setId(snowflakeIdWorker.nextId());
+        account.setCreateBy("admin");
+        account.setUpdateBy("admin");
+        account.setIsDel(false);
         accountRepository.save(account);
     }
 
-    /**
-     * 删除用户
-     */
-    public void del(String id) {
-        accountRepository.deleteById(id);
+    // 软删除用户
+    public void delete(String nickname) {
+
+        accountRepository.deleteByNickname(nickname, new Date());
     }
 
-    /**
-     * 分页列出所有用户
-     */
-    public Page<Account> select(Integer pageNumber, Integer pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber,pageSize);
-        return accountRepository.findAll(pageable);
+
+    // 更新用户，只能更新名
+    public void updateName(Account account) {
+        Account account1 = this.findOne(account.getNickname());
+        account1.setUpdateAt(new Date());
+        account1.setName(account.getName());
+        accountRepository.saveAndFlush(account1);
     }
 
-    /**
-     * 更新用户
-     */
-    public void update(Account account) {
-        String id = account.getId();
-        Account accountTemp = accountRepository.findById(id).get();
-        BeanUtils.copyProperties(account, accountTemp);
-        accountTemp.setUpdateBy("");
-        accountTemp.setUpdateAt(new Date());
-        accountRepository.save(accountTemp);
+    // 更新用户，只更新权限
+    public void updateLevel(Account account) {
+        Account account1 = this.findOne(account.getNickname());
+        account1.setUpdateAt(new Date());
+        account1.setLevel(account.getLevel());
+        accountRepository.saveAndFlush(account1);
     }
 
-    /**
-     * 注册：判断是否有该用户
-     */
-    public boolean exist(String nickname){
-        if(accountRepository.findByNickname(nickname)== null){
+    // 更新用户，只更新密码
+    public void updatePaswword(Account account) {
+        Account account1 = this.findOne(account.getNickname());
+        account1.setUpdateAt(new Date());
+        account1.setPassword(account.getPassword());
+        accountRepository.saveAndFlush(account1);
+    }
+
+    // 判断用户是否存在
+    public boolean isExistByNickname(String nickname) {
+        Account account = accountRepository.findByNickname(nickname);
+        if (account == null) {
             return false;
-        }else {
+            // 用户不存在，可以注册
+        } else {
             return true;
+            // 用户存在，不可以注册
         }
     }
 
-    /**
-     * 根据用户名拿密码
-     */
-    public String password(String nickname){
-        return accountRepository.findByNickname(nickname).getPassword();
-    }
 }
