@@ -15,6 +15,7 @@ import java.util.List;
 
 /**
  * @author Noah
+ * @功能 对工作人员的管理，增删查改等功能
  */
 @Service
 public class AccountService {
@@ -27,8 +28,17 @@ public class AccountService {
 
     // 根据分页查找所有
     public Page<Account> findAll(int page, int size) {
+        page--;
         Pageable pageable = PageRequest.of(page, size);
         Page<Account> account = accountRepository.findAllAccount(pageable);
+        return account;
+    }
+
+    // 查找所有已被软删除的
+    public Page<Account> findAllDeleted(int page,int size){
+        page--;
+        Pageable pageable=PageRequest.of(page,size);
+        Page<Account> account =accountRepository.findAllDeletedAccount(pageable);
         return account;
     }
 
@@ -49,9 +59,11 @@ public class AccountService {
     }
 
     // 软删除用户
-    public void delete(String nickname) {
-
-        accountRepository.deleteByNickname(nickname, new Date());
+    public void delete(String nicknames) {
+        String deleteNicknames[] = nicknames.split(",");
+        for(int i =0;i<deleteNicknames.length;i++){
+            accountRepository.deleteByNickname(deleteNicknames[i], new Date(),"admin");
+        }
     }
 
 
@@ -59,6 +71,7 @@ public class AccountService {
     public void updateName(Account account) {
         Account account1 = this.findOne(account.getNickname());
         account1.setUpdateAt(new Date());
+        account1.setUpdateBy("admin");
         account1.setName(account.getName());
         accountRepository.saveAndFlush(account1);
     }
@@ -67,6 +80,7 @@ public class AccountService {
     public void updateLevel(Account account) {
         Account account1 = this.findOne(account.getNickname());
         account1.setUpdateAt(new Date());
+        account1.setUpdateBy("admin");
         account1.setLevel(account.getLevel());
         accountRepository.saveAndFlush(account1);
     }
@@ -75,6 +89,7 @@ public class AccountService {
     public void updatePaswword(Account account) {
         Account account1 = this.findOne(account.getNickname());
         account1.setUpdateAt(new Date());
+        account1.setUpdateBy("test"); // 写死，用session代替
         account1.setPassword(account.getPassword());
         accountRepository.saveAndFlush(account1);
     }

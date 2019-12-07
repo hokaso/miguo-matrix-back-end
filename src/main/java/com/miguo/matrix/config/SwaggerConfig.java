@@ -23,57 +23,57 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @SpringBootConfiguration
 public class SwaggerConfig {
-    /**
-     * 是否启动文档标识
-     */
-    private Boolean enableSwagger = Boolean.FALSE;
-    private Environment environment;
-    /**
-     * 功能描述：注入环境变量
-     * @author Hocassian
-     * @Date 2019/11/26 10:21
-     */
-    @Autowired
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
-        /* 通过启动的环境变量决定是否启用Swagger-UI文档 */
-        Profiles profiles = Profiles.of("dev", "main");
-        enableSwagger = environment.acceptsProfiles(profiles);
-    }
-    @Bean("accountApi")
-    public Docket accountApi() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("员工数据接口")
-                .select()
-                .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
-                .paths(PathSelectors.regex("/account.*"))
-                .build()
-                .apiInfo(apiInfo());
-    }
-
-    @Bean("adminApi")
-    public Docket adminApi() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("登陆接口")
-                .select()
-                .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
-                .paths(PathSelectors.regex("/admin.*"))
-                .build()
-                .apiInfo(apiInfo());
-    }
-    /**
-     * 功能描述：SwaggerUI文档的基本信息
-     * @author Hocassian
-     * @Date 2019/11/26 10:21
-     */
-    private ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-                .title("数据一览")
-                .description("所有的接口都在这里了~")
-                .termsOfServiceUrl("http://localhost:9090")
-                .contact(new Contact("Hocassian", "https://Hocassian.cn", "hokaso@qq.com"))
-                .version("v1.0.1")
-                .build();
-    }
+//    /**
+//     * 是否启动文档标识
+//     */
+//    private Boolean enableSwagger = Boolean.FALSE;
+//    private Environment environment;
+//    /**
+//     * 功能描述：注入环境变量
+//     * @author Hocassian
+//     * @Date 2019/11/26 10:21
+//     */
+//    @Autowired
+//    public void setEnvironment(Environment environment) {
+//        this.environment = environment;
+//        /* 通过启动的环境变量决定是否启用Swagger-UI文档 */
+//        Profiles profiles = Profiles.of("dev", "main");
+//        enableSwagger = environment.acceptsProfiles(profiles);
+//    }
+//    @Bean("accountApi")
+//    public Docket accountApi() {
+//        return new Docket(DocumentationType.SWAGGER_2)
+//                .groupName("员工数据接口")
+//                .select()
+//                .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
+//                .paths(PathSelectors.regex("/account.*"))
+//                .build()
+//                .apiInfo(apiInfo());
+//    }
+//
+//    @Bean("adminApi")
+//    public Docket adminApi() {
+//        return new Docket(DocumentationType.SWAGGER_2)
+//                .groupName("登陆接口")
+//                .select()
+//                .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
+//                .paths(PathSelectors.regex("/admin.*"))
+//                .build()
+//                .apiInfo(apiInfo());
+//    }
+//    /**
+//     * 功能描述：SwaggerUI文档的基本信息
+//     * @author Hocassian
+//     * @Date 2019/11/26 10:21
+//     */
+//    private ApiInfo apiInfo() {
+//        return new ApiInfoBuilder()
+//                .title("数据一览")
+//                .description("所有的接口都在这里了~")
+//                .termsOfServiceUrl("http://localhost:9090")
+//                .contact(new Contact("Hocassian", "https://Hocassian.cn", "hokaso@qq.com"))
+//                .version("v1.0.1")
+//                .build();
+//    }
 
 }

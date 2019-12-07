@@ -24,11 +24,15 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     // 软删除某一个用户
     @Modifying
     @Transactional
-    @Query(value = "update com_staff set is_del = true , update_at = :#{#date} where  nickname = :#{#nickname} ", nativeQuery = true)
-    void deleteByNickname(String nickname, Date date);
+    @Query(value = "update com_staff set is_del = true , update_at = :#{#date} , update_by = :#{#updateBy} where  nickname = :#{#nickname} ", nativeQuery = true)
+    void deleteByNickname(String nickname, Date date,String updateBy);
 
-    // 分页查询没被软删除的所有用户
+    // 查询所有未被软删除的用户
     @Query(value = "select * from com_staff where is_del = false",nativeQuery = true)
     Page<Account> findAllAccount(Pageable pageable);
+
+    // 查询所有已被软删除的用户
+    @Query(value="select * from com_staff where is_del = true",nativeQuery = true)
+    Page<Account> findAllDeletedAccount(Pageable pageable);
 
 }
