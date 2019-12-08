@@ -3,8 +3,6 @@ package com.miguo.matrix.controller;
 import com.miguo.matrix.dto.PageResult;
 import com.miguo.matrix.dto.Result;
 import com.miguo.matrix.dto.staff.UpdatePasswordDto;
-import com.miguo.matrix.entity.client.Article;
-import com.miguo.matrix.entity.client.Video;
 import com.miguo.matrix.entity.staff.Account;
 import com.miguo.matrix.service.client.ArticleService;
 import com.miguo.matrix.service.client.VideoService;
@@ -17,12 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.List;
-
 /**
- * @author Hocassian
+ * @author Noah
  */
 @Api("管理员的接口，该接口管理员工的增删查改")
 @Slf4j
@@ -59,9 +53,9 @@ public class AdminController {
     }
 
     // 分页查询所以被删除的员工
-    @ApiOperation(value="分页查询所以被删除的员工")
+    @ApiOperation(value = "分页查询所有被删除的员工")
     @GetMapping("/fina_all_deleted/{page}/{size}")
-    public Result<PageResult<Account>> findAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size){
+    public Result<PageResult<Account>> findAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size) {
         Result<PageResult<Account>> result = new Result<>();
         try {
             Page<Account> accountPage = accountService.findAllDeleted(page, size);
@@ -105,56 +99,18 @@ public class AdminController {
         return result;
     }
 
-    @ApiOperation(value = "修改员工名称")
-    @PutMapping("/update_name")
-    public Result<String> updateName(@RequestBody String name) {
-        Result<String> result = new Result<>();
-        result.setMessage("update_name").setCode(HttpStatus.OK);
-        try {
-            Account account = accountService.findOne("test"); // 写死，到时候用session代替
-            account.setName(name);
-            accountService.updateName(account);
-            result.setData("success");
-        } catch (Exception e) {
-            result.setData("fail");
-        }
 
-        return result;
-    }
-
-    @ApiOperation(value = "修改员工密码")
-    @PutMapping("/update_password")
-    public Result<String> updatePassword(@RequestBody UpdatePasswordDto updatePasswordDto) {
-        Result<String> result = new Result<>();
-        result.setMessage("update_password").setCode(HttpStatus.OK);
-        try {
-            Account account = accountService.findOne("test"); // 写死，到时候用session代替
-
-            if (account.getPassword().equals(updatePasswordDto.getBeforePassword())) {
-                // 用户输入的原密码正确
-                account.setPassword(updatePasswordDto.getAfterPassword());
-                accountService.updatePaswword(account);
-                result.setData("success");
-            } else {
-                result.setData("fail");
-            }
-        } catch (Exception e) {
-            result.setData("fail");
-        }
-
-        return result;
-    }
 
     @ApiOperation(value = "修改员工权限")
     @PutMapping("/update_level")
-    public Result<String> updateLevel(@RequestBody String level){
+    public Result<String> updateLevel(@RequestBody String level) {
         Result<String> result = new Result<>();
         try {
             Account account = accountService.findOne("test"); // 写死，到时候用session代替
             account.setLevel(level);
             accountService.updateLevel(account);
             result.setData("success");
-        }catch (Exception e){
+        } catch (Exception e) {
             result.setData("fail");
         }
         return result;
@@ -166,15 +122,14 @@ public class AdminController {
     public Result<String> delete(@PathVariable String nicknames) {
         Result<String> result = new Result<>();
         result.setCode(HttpStatus.OK).setMessage("delete");
-        try{
+        try {
             accountService.delete(nicknames);
             result.setData("success");
-        }catch (Exception e){
+        } catch (Exception e) {
             result.setData("fail");
         }
         return result;
     }
-
 
 
 }

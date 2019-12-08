@@ -1,6 +1,7 @@
 package com.miguo.matrix.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -18,6 +19,9 @@ import java.util.Collections;
 @EnableWebMvc
 @SpringBootConfiguration
 public class WebMvcConfig implements WebMvcConfigurer {
+    @Value("${file.path}")
+    private String filePath;
+
     @Bean
     public RequestMappingHandlerAdapter requestMappingHandlerAdapter(@Autowired MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter, @Autowired ContentNegotiationManager mvcContentNegotiationManager) {
         RequestMappingHandlerAdapter requestMappingHandlerAdapter = new RequestMappingHandlerAdapter();
@@ -40,6 +44,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
         registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+
+        /* 区分系统环境、自定义上传映射路径 */
+        String os = System.getProperty("os.name");
+        if (os.toLowerCase().startsWith("win")) { // 如果是Windows系统
+            registry.addResourceHandler("/file/**")
+                    .addResourceLocations("file:F:/test/");
+        } else { // linux 和mac
+            registry.addResourceHandler("/file/**")
+                    .addResourceLocations("file:" + filePath + "/");
+        }
     }
 
     @Override

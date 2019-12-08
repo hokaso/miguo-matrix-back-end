@@ -2,10 +2,13 @@ package com.miguo.matrix.controller;
 
 import com.miguo.matrix.dto.PageResult;
 import com.miguo.matrix.dto.Result;
+import com.miguo.matrix.dto.staff.UpdatePasswordDto;
 import com.miguo.matrix.entity.client.Article;
 import com.miguo.matrix.entity.client.Video;
+import com.miguo.matrix.entity.staff.Account;
 import com.miguo.matrix.service.client.ArticleService;
 import com.miguo.matrix.service.client.VideoService;
+import com.miguo.matrix.service.staff.AccountService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +28,50 @@ public class AccountController {
 
     @Autowired
     private VideoService videoService;
+
+    @Autowired
+    private AccountService accountService;
+
+    @ApiOperation(value = "修改员工名称")
+    @PutMapping("/update_name")
+    public Result<String> updateName(@RequestBody String name) {
+        Result<String> result = new Result<>();
+        result.setMessage("update_name").setCode(HttpStatus.OK);
+        try {
+            Account account = accountService.findOne("test"); // 写死，到时候用session代替
+            account.setName(name);
+            accountService.updateName(account);
+            result.setData("success");
+        } catch (Exception e) {
+            result.setData("fail");
+        }
+
+        return result;
+    }
+
+    @ApiOperation(value = "修改员工密码")
+    @PutMapping("/update_password")
+    public Result<String> updatePassword(@RequestBody UpdatePasswordDto updatePasswordDto) {
+        Result<String> result = new Result<>();
+        result.setMessage("update_password").setCode(HttpStatus.OK);
+        try {
+            Account account = accountService.findOne("test"); // 写死，到时候用session代替
+
+            if (account.getPassword().equals(updatePasswordDto.getBeforePassword())) {
+                // 用户输入的原密码正确
+                account.setPassword(updatePasswordDto.getAfterPassword());
+                accountService.updatePaswword(account);
+                result.setData("success");
+            } else {
+                result.setData("fail");
+            }
+        } catch (Exception e) {
+            result.setData("fail");
+        }
+
+        return result;
+    }
+//    -----------以下为文章的增删改查----------
 
     @ApiOperation("文章的增加")
     @PostMapping("/article/add")
@@ -86,6 +133,47 @@ public class AccountController {
         return result;
     }
 
+//    --------以下为视频的增删改查-------
+
+    @ApiOperation("视频的添加")
+    @PostMapping("/video/add")
+    public Result<String> videoAdd(@RequestBody Video video){
+        Result<String> result = new Result<>();
+        try{
+            videoService.add(video);
+            result.setCode(HttpStatus.OK).setMessage("add").setData("success");
+        }catch (Exception e){
+            result.setCode(HttpStatus.OK).setMessage("add").setData("fail");
+        }
+        return result;
+    }
+
+    @ApiOperation("视频的批量软删除")
+    @DeleteMapping("/video/delete/{ids}")
+    public Result<String> videoDelete(@PathVariable("ids") String ids) {
+        Result<String> result =new Result<>();
+        try{
+            videoService.delete(ids);
+            result.setCode(HttpStatus.OK).setMessage("delete").setData("success");
+        }catch (Exception e){
+            result.setCode(HttpStatus.OK).setMessage("delete").setData("fail");
+        }
+        return result;
+    }
+
+    @ApiOperation("视频的更新")
+    @PutMapping("/video/update")
+    public Result<String> videoUpdate(@RequestBody Video video){
+        Result<String> result = new Result<>();
+        try{
+            videoService.update(video);
+            result.setCode(HttpStatus.OK).setMessage("update").setData("success");
+        }catch (Exception e){
+            result.setCode(HttpStatus.OK).setMessage("update").setData("fail");
+        }
+        return result;
+    }
+
     @ApiOperation("查找所有已被删除的视频")
     @GetMapping("/video/find_all_deleted/{page}/{size}")
     public Result<PageResult<Video>> videoFindAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size){
@@ -101,5 +189,10 @@ public class AccountController {
         }
         return result;
     }
+
+// ----------以下为轮播图的增删改-------
+
+
+
 
 }
