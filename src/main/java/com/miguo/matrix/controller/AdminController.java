@@ -52,7 +52,7 @@ public class AdminController {
         return result;
     }
 
-    // 分页查询所以被删除的员工
+    // 分页查询所有被删除的员工
     @ApiOperation(value = "分页查询所有被删除的员工")
     @GetMapping("/fina_all_deleted/{page}/{size}")
     public Result<PageResult<Account>> findAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size) {

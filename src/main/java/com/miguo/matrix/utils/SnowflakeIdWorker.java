@@ -77,10 +77,6 @@ public class SnowflakeIdWorker {
             sequence = 0L;
         }
 
-
-
-
-
         lastStmp = currStmp;
 
         return String.valueOf((currStmp - START_STMP) << TIMESTMP_LEFT //时间戳部分
