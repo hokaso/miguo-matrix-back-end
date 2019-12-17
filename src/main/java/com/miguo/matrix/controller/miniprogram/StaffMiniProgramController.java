@@ -2,7 +2,9 @@ package com.miguo.matrix.controller.miniprogram;
 
 import com.miguo.matrix.dto.PageResult;
 import com.miguo.matrix.dto.Result;
+import com.miguo.matrix.entity.miniprogram.Activity;
 import com.miguo.matrix.entity.miniprogram.Swiper;
+import com.miguo.matrix.service.miniprogram.MpActivityService;
 import com.miguo.matrix.service.miniprogram.MpSwiperService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,6 +26,9 @@ public class StaffMiniProgramController {
 
     @Autowired
     private MpSwiperService swiperService;
+
+    @Autowired
+    private MpActivityService activityService;
     
 // ----------以下为小程序轮播图的增删改-------
 
@@ -97,4 +102,79 @@ public class StaffMiniProgramController {
         }
         return result;
     }
+
+// ----------以下为小程序活动的增删改-------
+
+    @ApiOperation("小程序活动的添加")
+    @PostMapping("/mp_activity/add")
+    public Result<String> mpActivityAdd(@RequestBody Activity activity){
+        Result<String> result = new Result<>();
+        try{
+            activityService.add(activity);
+            result.setCode(HttpStatus.OK).setMessage("add").setData("success");
+        }catch (Exception e){
+            result.setCode(HttpStatus.OK).setMessage("add").setData("fail");
+        }
+        return result;
+    }
+
+    @ApiOperation("小程序活动的批量软删除")
+    @DeleteMapping("/mp_activity/delete/{ids}")
+    public Result<String> mpActivityDelete(@PathVariable("ids") String ids) {
+        Result<String> result =new Result<>();
+        try{
+            activityService.delete(ids);
+            result.setCode(HttpStatus.OK).setMessage("delete").setData("success");
+        }catch (Exception e){
+            result.setCode(HttpStatus.OK).setMessage("delete").setData("fail");
+        }
+        return result;
+    }
+
+    @ApiOperation("小程序活动的更新")
+    @PutMapping("/mp_activity/update")
+    public Result<String> mpActivityUpdate(@RequestBody Activity activity){
+        Result<String> result = new Result<>();
+        try{
+            activityService.update(activity);
+            result.setCode(HttpStatus.OK).setMessage("update").setData("success");
+        }catch (Exception e){
+            result.setCode(HttpStatus.OK).setMessage("update").setData("fail");
+        }
+        return result;
+    }
+
+    @ApiOperation("分页查找所有已被删除的小程序活动")
+    @GetMapping("/mp_activity/find_all_deleted/{page}/{size}")
+    public Result<PageResult<Activity>> mpActivityFindAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size){
+        Result<PageResult<Activity>> result = new Result<>();
+        Page<Activity> pageTemp;
+        try {
+            pageTemp = activityService.findAllDeleted(page, size);
+            PageResult<Activity> pageResult = new PageResult<>();
+            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
+            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
+        } catch (Exception e) {
+            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
+        }
+        return result;
+    }
+
+    @ApiOperation("分页查找所有未被删除的小程序活动")
+    @GetMapping("/mp_activity/find_all_exist/{page}/{size}")
+    public Result<PageResult<Activity>> mpActivityFindAllExist(@PathVariable("page") int page, @PathVariable("size") int size){
+        Result<PageResult<Activity>> result = new Result<>();
+        Page<Activity> pageTemp;
+        try {
+            pageTemp = activityService.findAllExist(page, size);
+            PageResult<Activity> pageResult = new PageResult<>();
+            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
+            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
+        } catch (Exception e) {
+            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
+        }
+        return result;
+    }
+
+    // @ApiOperation("不分页查找所有未被删除的小程序活动")
 }

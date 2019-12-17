@@ -46,7 +46,7 @@ public class MpActivityService {
         }
     }
 
-    // 查找所有已被删除的活动
+    // 分页查找所有已被删除的活动
     public Page<Activity> findAllDeleted(int page,int size){
         page--;
         Pageable pageable=PageRequest.of(page,size);
@@ -54,13 +54,15 @@ public class MpActivityService {
         return pageTemp;
     }
 
-    // 查找所有未被删除的活动
+    // 分页查找所有未被删除的活动
     public Page<Activity> findAllExist(int page,int size){
         page--;
         Pageable pageable=PageRequest.of(page,size);
         Page<Activity> pageTemp = activityRepository.findAllExistActivity(pageable);
         return pageTemp;
     }
+
+    // 不分页查找所有未被删除的活动
 
     // 通过id查找该活动
     public Activity findOneById(String id)

@@ -25,7 +25,7 @@ public interface MpActivityRepository extends JpaRepository<Activity,String> {
 
     // 查找所有标题或者内容包含该关键字且未被软删除的活动（输入活动相关信息时联结用）
     @Query(value = "select * from vote_activities WHERE activity_name LIKE %:#{#keywords}% OR activity_profile LIKE %:#{#keywords}% and is_del = false",nativeQuery = true)
-    List<Activity> findActivityByKeywordsFromInput(String keywords, Pageable pageable);
+    List<Activity> findActivityByKeywordsFromInput(String keywords);
 
     // 分页查找所有标题或者内容包含该关键字且未被软删除的活动（录入活动页面用）
     @Query(value = "select * from vote_activities WHERE activity_name LIKE %:#{#keywords}% OR activity_profile LIKE %:#{#keywords}% and is_del = false",nativeQuery = true)
