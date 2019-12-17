@@ -32,6 +32,8 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
+//    -----------以下为员工信息的增删改查----------
+
     @ApiOperation(value = "修改员工名称")
     @PutMapping("/update_name")
     public Result<String> updateName(@RequestBody String name) {
@@ -116,7 +118,6 @@ public class AccountController {
         return result;
     }
 
-
     @ApiOperation("查找所有已被删除的文章")
     @GetMapping("/article/find_all_deleted/{page}/{size}")
     public Result<PageResult<Article>> articleFindAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size) {
@@ -124,6 +125,22 @@ public class AccountController {
         Page<Article> page1;
         try {
             page1 = articleService.findAllDeleted(page, size);
+            PageResult<Article> pageResult = new PageResult<>();
+            pageResult.setTotal(page1.getTotalElements()).setData(page1.getContent()).setPage(page).setSize(size);
+            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
+        } catch (Exception e) {
+            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
+        }
+        return result;
+    }
+
+    @ApiOperation("查找所有未被删除的文章")
+    @GetMapping("/article/find_all_deleted/{page}/{size}")
+    public Result<PageResult<Article>> articleFindAllExist(@PathVariable("page") int page, @PathVariable("size") int size) {
+        Result<PageResult<Article>> result = new Result<>();
+        Page<Article> page1;
+        try {
+            page1 = articleService.findAllExist(page, size);
             PageResult<Article> pageResult = new PageResult<>();
             pageResult.setTotal(page1.getTotalElements()).setData(page1.getContent()).setPage(page).setSize(size);
             result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
@@ -190,7 +207,23 @@ public class AccountController {
         return result;
     }
 
-// ----------以下为轮播图的增删改-------
+    @ApiOperation("查找所有未被删除的视频")
+    @GetMapping("/video/find_all_exist/{page}/{size}")
+    public Result<PageResult<Video>> videoFindAllExist(@PathVariable("page") int page, @PathVariable("size") int size){
+        Result<PageResult<Video>> result = new Result<>();
+        Page<Video> page1;
+        try {
+            page1 = videoService.findAllExist(page, size);
+            PageResult<Video> pageResult = new PageResult<>();
+            pageResult.setTotal(page1.getTotalElements()).setData(page1.getContent()).setPage(page).setSize(size);
+            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
+        } catch (Exception e) {
+            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
+        }
+        return result;
+    }
+
+// ----------以下为网站轮播图的增删改-------
 
 
 

@@ -4,6 +4,7 @@ import com.miguo.matrix.entity.client.Article;
 import com.miguo.matrix.entity.client.Video;
 import com.miguo.matrix.repository.client.VideoRepository;
 import com.miguo.matrix.utils.SnowflakeIdWorker;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -44,15 +45,22 @@ public class VideoService {
     public Page<Video> findAllByKeywords(String keywords,int page,int size){
         page--;
         Pageable pageable = PageRequest.of(page, size);
-        Page<Video> page1 = videoRepository.finVideoByKeywords(keywords,pageable);
-        return page1;
+        Page<Video> pageTemp = videoRepository.findVideoByKeywords(keywords,pageable);
+        return pageTemp;
     }
 
     // 查找所有已被删除的视频
     public Page<Video> findAllDeleted(int page,int size){
         Pageable pageable = PageRequest.of(page,size);
-        Page<Video> page1 = videoRepository.findAllDeletedVideo(pageable);
-        return page1;
+        Page<Video> pageTemp = videoRepository.findAllDeletedVideo(pageable);
+        return pageTemp;
+    }
+
+    // 查找所有未被删除的视频
+    public Page<Video> findAllExist(int page,int size){
+        Pageable pageable = PageRequest.of(page,size);
+        Page<Video> pageTemp = videoRepository.findAllExistVideo(pageable);
+        return pageTemp;
     }
 
     // 通过id找视频
@@ -63,14 +71,11 @@ public class VideoService {
 
     // 更新视频，注意video_date(创作日期)不能被更新
     public void update(Video video){
-        Video video1=this.findOneById(video.getId());
-        video1.setVideoUrl(video.getVideoUrl());
-        video1.setVideoProfile(video.getVideoProfile());
-        video1.setVideoPic(video.getVideoPic());
-        video1.setVideoTitle(video.getVideoTitle());
-        video1.setUpdateAt(new Date());
-        video1.setUpdateBy("test"); // 写死，用session代替
-        videoRepository.saveAndFlush(video1);
+        Video videoTemp=this.findOneById(video.getId());
+        BeanUtils.copyProperties(video, videoTemp);
+        videoTemp.setUpdateAt(new Date());
+        videoTemp.setUpdateBy("test"); // 写死，用session代替
+        videoRepository.saveAndFlush(videoTemp);
     }
 
 }

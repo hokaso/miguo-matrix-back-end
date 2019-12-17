@@ -12,10 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class MiniProgramController {
     /*
     * 需要实现：
-    * 1.投票活动
-    * 2.对于每个活动创建投票对象
-    * 3.记录每一条投票记录
-    * 4.
+    * 1.获取当前投票活动
+    * 2.获取当前活动的投票对象
+    * 3.记录每一条投票记录（增加）
+    * 4.获取投票记录条目数
+    * 5.获取对应的轮播图、赞助商等信息
     * */
 
 

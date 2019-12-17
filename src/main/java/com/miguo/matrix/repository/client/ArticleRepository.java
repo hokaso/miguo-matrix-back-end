@@ -29,5 +29,10 @@ public interface ArticleRepository extends JpaRepository<Article, String> {
     @Query(value = "select * from client_article where is_del = true",nativeQuery = true)
     Page<Article> findAllDeletedArticle(Pageable pageable);
 
+    // 查找所有未被软删除的文章
+    @Query(value = "select * from client_article where is_del = false",nativeQuery = true)
+    Page<Article> findAllExistArticle(Pageable pageable);
+
+    // 通过id找文章
     Article findArticleById(String id);
 }

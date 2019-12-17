@@ -23,7 +23,11 @@ public interface VideoRepository extends JpaRepository<Video,String> {
 
     // 分页视频标题或者内容包含该关键字且未被软删除的文章
     @Query(value = "select * from client_video WHERE video_title LIKE %:#{#keywords}% OR video_profile LIKE %:#{#keywords}% and is_del = false",nativeQuery = true)
-    Page<Video> finVideoByKeywords(String keywords,Pageable pageable);
+    Page<Video> findVideoByKeywords(String keywords,Pageable pageable);
+
+    // 查找所有未被软删除的视频
+    @Query(value = "select * from client_video where is_del = false",nativeQuery = true)
+    Page<Video> findAllExistVideo(Pageable pageable);
 
     // 查找所有已被软删除的视频
     @Query(value = "select * from client_video where is_del = true",nativeQuery = true)
