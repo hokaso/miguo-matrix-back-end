@@ -35,7 +35,7 @@ public class ClientController {
     @Autowired
     private VideoService videoService;
 
-    @ApiOperation("查找所有模糊查询且未被软删除的文章")
+    @ApiOperation("分页查找所有模糊查询且未被软删除的文章")
     @PostMapping("/article/find_all_by_keywords")
     public Result<PageResult<Article>> articleFindAllByKeywords(@RequestBody SearchDto searchDto) {
         Result<PageResult<Article>> result = new Result<>();
@@ -72,7 +72,7 @@ public class ClientController {
         return result;
     }
 
-    @ApiOperation("查找所有模糊查询且未被软删除的视频")
+    @ApiOperation("分页查找所有模糊查询且未被软删除的视频")
     @PostMapping("/video/find_all_by_keywords")
     public Result<PageResult<Video>> videoFindAllByKeywords(@RequestBody SearchDto searchDto) {
         Result<PageResult<Video>> result = new Result<>();

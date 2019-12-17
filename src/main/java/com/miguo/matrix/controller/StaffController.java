@@ -123,7 +123,7 @@ public class StaffController {
         return result;
     }
 
-    @ApiOperation("查找所有已被删除的文章")
+    @ApiOperation("分页查找所有已被删除的文章")
     @GetMapping("/article/find_all_deleted/{page}/{size}")
     public Result<PageResult<Article>> articleFindAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size) {
         Result<PageResult<Article>> result = new Result<>();
@@ -139,7 +139,7 @@ public class StaffController {
         return result;
     }
 
-    @ApiOperation("查找所有未被删除的文章")
+    @ApiOperation("分页查找所有未被删除的文章")
     @GetMapping("/article/find_all_deleted/{page}/{size}")
     public Result<PageResult<Article>> articleFindAllExist(@PathVariable("page") int page, @PathVariable("size") int size) {
         Result<PageResult<Article>> result = new Result<>();
@@ -196,7 +196,7 @@ public class StaffController {
         return result;
     }
 
-    @ApiOperation("查找所有已被删除的视频")
+    @ApiOperation("分页查找所有已被删除的视频")
     @GetMapping("/video/find_all_deleted/{page}/{size}")
     public Result<PageResult<Video>> videoFindAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size){
         Result<PageResult<Video>> result = new Result<>();
@@ -212,7 +212,7 @@ public class StaffController {
         return result;
     }
 
-    @ApiOperation("查找所有未被删除的视频")
+    @ApiOperation("分页查找所有未被删除的视频")
     @GetMapping("/video/find_all_exist/{page}/{size}")
     public Result<PageResult<Video>> videoFindAllExist(@PathVariable("page") int page, @PathVariable("size") int size){
         Result<PageResult<Video>> result = new Result<>();
@@ -269,7 +269,7 @@ public class StaffController {
         return result;
     }
 
-    @ApiOperation("查找所有已被删除的网站轮播图")
+    @ApiOperation("分页查找所有已被删除的网站轮播图")
     @GetMapping("/web_swiper/find_all_deleted/{page}/{size}")
     public Result<PageResult<Swiper>> webSwiperFindAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size){
         Result<PageResult<Swiper>> result = new Result<>();
@@ -285,7 +285,7 @@ public class StaffController {
         return result;
     }
 
-    @ApiOperation("查找所有未被删除的网站轮播图")
+    @ApiOperation("分页查找所有未被删除的网站轮播图")
     @GetMapping("/web_swiper/find_all_exist/{page}/{size}")
     public Result<PageResult<Swiper>> webSwiperFindAllExist(@PathVariable("page") int page, @PathVariable("size") int size){
         Result<PageResult<Swiper>> result = new Result<>();
