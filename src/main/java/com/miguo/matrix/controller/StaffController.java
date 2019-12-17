@@ -37,7 +37,7 @@ public class StaffController {
     @Autowired
     private AccountService accountService;
 
-//    -----------以下为员工信息的增删改查----------
+    //    -----------以下为员工信息的增删改查----------
 
     @ApiOperation(value = "修改员工名称")
     @PutMapping("/account/update_name")
@@ -78,7 +78,7 @@ public class StaffController {
 
         return result;
     }
-//    -----------以下为文章的增删改查----------
+    //    -----------以下为文章的增删改查----------
 
     @ApiOperation("文章的增加")
     @PostMapping("/article/add")
@@ -155,7 +155,7 @@ public class StaffController {
         return result;
     }
 
-//    --------以下为视频的增删改查-------
+    //    --------以下为视频的增删改查-------
 
     @ApiOperation("视频的添加")
     @PostMapping("/video/add")
@@ -228,7 +228,7 @@ public class StaffController {
         return result;
     }
 
-// ----------以下为网站轮播图的增删改-------
+    // ----------以下为网站轮播图的增删改-------
 
     @ApiOperation("网站轮播图的添加")
     @PostMapping("/web_swiper/add")

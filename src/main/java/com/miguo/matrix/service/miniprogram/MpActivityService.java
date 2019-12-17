@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 功能描述：
@@ -62,7 +63,18 @@ public class MpActivityService {
         return pageTemp;
     }
 
-    // 不分页查找所有未被删除的活动
+    // 不分页查找所有标题或者内容包含该关键字的未被删除的活动
+    public List<Activity> findAllActivityByKeywordsFromInput (String keywords) {
+        return activityRepository.findActivityByKeywordsFromInput(keywords);
+    }
+
+    // 分页查找所有标题或者内容包含该关键字的未被删除的活动
+    public Page<Activity> findAllActivityByKeywords(String keywords,int page,int size){
+        page--;
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Activity> pageTemp = activityRepository.findActivityByKeywords(keywords,pageable);
+        return pageTemp;
+    }
 
     // 通过id查找该活动
     public Activity findOneById(String id)

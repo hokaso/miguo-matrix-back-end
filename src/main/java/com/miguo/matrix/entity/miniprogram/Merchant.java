@@ -40,6 +40,6 @@ public class Merchant extends BaseEntity {
     private String merchantInfo;
 
     @Column(name = "merchant_logo")
-    @ApiModelProperty("赞助商图标（地址）")
+    @ApiModelProperty("赞助商图标（链接地址）")
     private String merchantLogo;
 }

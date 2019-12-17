@@ -15,6 +15,7 @@ import java.util.List;
 /**
  * @author Hocassian
  */
+@Repository
 public interface MpActivityRepository extends JpaRepository<Activity,String> {
 
     // 软删除某一活动
