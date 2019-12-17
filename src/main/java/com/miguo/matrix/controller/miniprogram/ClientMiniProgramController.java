@@ -1,4 +1,4 @@
-package com.miguo.matrix.controller;
+package com.miguo.matrix.controller.miniprogram;
 
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Api("小程序专用接口，无需登陆")
 @Slf4j
 @RestController
-@RequestMapping("/miniprogram")
-public class MiniProgramController {
+@RequestMapping("/client_miniprogram")
+public class ClientMiniProgramController {
     /*
     * 需要实现：
     * 1.获取当前投票活动

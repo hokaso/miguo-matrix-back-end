@@ -17,7 +17,7 @@ public interface SwiperRepository extends JpaRepository<Swiper,String> {
     // 软删除某一张轮播图
     @Modifying
     @Transactional
-    @Query(value = "update client_swiper set is_del = true , update_at = :#{#date},update_by = :#{#updateBy} where  id = :#{#id} ", nativeQuery = true)
+    @Query(value = "update client_swiper set is_del = true , update_at = :#{#date},update_by = :#{#updateBy} where id = :#{#id} ", nativeQuery = true)
     void deleteById(String id, Date date, String updateBy);
 
     // 查找所有已被软删除的轮播图

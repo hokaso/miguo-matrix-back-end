@@ -4,9 +4,11 @@ import com.miguo.matrix.dto.PageResult;
 import com.miguo.matrix.dto.Result;
 import com.miguo.matrix.dto.staff.UpdatePasswordDto;
 import com.miguo.matrix.entity.client.Article;
+import com.miguo.matrix.entity.client.Swiper;
 import com.miguo.matrix.entity.client.Video;
 import com.miguo.matrix.entity.staff.Account;
 import com.miguo.matrix.service.client.ArticleService;
+import com.miguo.matrix.service.client.SwiperService;
 import com.miguo.matrix.service.client.VideoService;
 import com.miguo.matrix.service.staff.AccountService;
 import io.swagger.annotations.Api;
@@ -20,8 +22,8 @@ import org.springframework.web.bind.annotation.*;
 @Api("员工管理接口，对视频、文章进行增删改")
 @Slf4j
 @RestController
-@RequestMapping("/account")
-public class AccountController {
+@RequestMapping("/staff")
+public class StaffController {
 
     @Autowired
     private ArticleService articleService;
@@ -30,12 +32,15 @@ public class AccountController {
     private VideoService videoService;
 
     @Autowired
+    private SwiperService swiperService;
+
+    @Autowired
     private AccountService accountService;
 
 //    -----------以下为员工信息的增删改查----------
 
     @ApiOperation(value = "修改员工名称")
-    @PutMapping("/update_name")
+    @PutMapping("/account/update_name")
     public Result<String> updateName(@RequestBody String name) {
         Result<String> result = new Result<>();
         result.setMessage("update_name").setCode(HttpStatus.OK);
@@ -52,7 +57,7 @@ public class AccountController {
     }
 
     @ApiOperation(value = "修改员工密码")
-    @PutMapping("/update_password")
+    @PutMapping("/account/update_password")
     public Result<String> updatePassword(@RequestBody UpdatePasswordDto updatePasswordDto) {
         Result<String> result = new Result<>();
         result.setMessage("update_password").setCode(HttpStatus.OK);
@@ -122,11 +127,11 @@ public class AccountController {
     @GetMapping("/article/find_all_deleted/{page}/{size}")
     public Result<PageResult<Article>> articleFindAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size) {
         Result<PageResult<Article>> result = new Result<>();
-        Page<Article> page1;
+        Page<Article> pageTemp;
         try {
-            page1 = articleService.findAllDeleted(page, size);
+            pageTemp = articleService.findAllDeleted(page, size);
             PageResult<Article> pageResult = new PageResult<>();
-            pageResult.setTotal(page1.getTotalElements()).setData(page1.getContent()).setPage(page).setSize(size);
+            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
             result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
         } catch (Exception e) {
             result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
@@ -138,11 +143,11 @@ public class AccountController {
     @GetMapping("/article/find_all_deleted/{page}/{size}")
     public Result<PageResult<Article>> articleFindAllExist(@PathVariable("page") int page, @PathVariable("size") int size) {
         Result<PageResult<Article>> result = new Result<>();
-        Page<Article> page1;
+        Page<Article> pageTemp;
         try {
-            page1 = articleService.findAllExist(page, size);
+            pageTemp = articleService.findAllExist(page, size);
             PageResult<Article> pageResult = new PageResult<>();
-            pageResult.setTotal(page1.getTotalElements()).setData(page1.getContent()).setPage(page).setSize(size);
+            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
             result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
         } catch (Exception e) {
             result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
@@ -195,11 +200,11 @@ public class AccountController {
     @GetMapping("/video/find_all_deleted/{page}/{size}")
     public Result<PageResult<Video>> videoFindAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size){
         Result<PageResult<Video>> result = new Result<>();
-        Page<Video> page1;
+        Page<Video> pageTemp;
         try {
-            page1 = videoService.findAllDeleted(page, size);
+            pageTemp = videoService.findAllDeleted(page, size);
             PageResult<Video> pageResult = new PageResult<>();
-            pageResult.setTotal(page1.getTotalElements()).setData(page1.getContent()).setPage(page).setSize(size);
+            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
             result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
         } catch (Exception e) {
             result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
@@ -211,11 +216,11 @@ public class AccountController {
     @GetMapping("/video/find_all_exist/{page}/{size}")
     public Result<PageResult<Video>> videoFindAllExist(@PathVariable("page") int page, @PathVariable("size") int size){
         Result<PageResult<Video>> result = new Result<>();
-        Page<Video> page1;
+        Page<Video> pageTemp;
         try {
-            page1 = videoService.findAllExist(page, size);
+            pageTemp = videoService.findAllExist(page, size);
             PageResult<Video> pageResult = new PageResult<>();
-            pageResult.setTotal(page1.getTotalElements()).setData(page1.getContent()).setPage(page).setSize(size);
+            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
             result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
         } catch (Exception e) {
             result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
@@ -225,7 +230,75 @@ public class AccountController {
 
 // ----------以下为网站轮播图的增删改-------
 
+    @ApiOperation("网站轮播图的添加")
+    @PostMapping("/web_swiper/add")
+    public Result<String> webSwiperAdd(@RequestBody Swiper swiper){
+        Result<String> result = new Result<>();
+        try{
+            swiperService.add(swiper);
+            result.setCode(HttpStatus.OK).setMessage("add").setData("success");
+        }catch (Exception e){
+            result.setCode(HttpStatus.OK).setMessage("add").setData("fail");
+        }
+        return result;
+    }
 
+    @ApiOperation("网站轮播图的批量软删除")
+    @DeleteMapping("/web_swiper/delete/{ids}")
+    public Result<String> webSwiperDelete(@PathVariable("ids") String ids) {
+        Result<String> result =new Result<>();
+        try{
+            swiperService.delete(ids);
+            result.setCode(HttpStatus.OK).setMessage("delete").setData("success");
+        }catch (Exception e){
+            result.setCode(HttpStatus.OK).setMessage("delete").setData("fail");
+        }
+        return result;
+    }
 
+    @ApiOperation("网站轮播图的更新")
+    @PutMapping("/web_swiper/update")
+    public Result<String> webSwiperUpdate(@RequestBody Video video){
+        Result<String> result = new Result<>();
+        try{
+            videoService.update(video);
+            result.setCode(HttpStatus.OK).setMessage("update").setData("success");
+        }catch (Exception e){
+            result.setCode(HttpStatus.OK).setMessage("update").setData("fail");
+        }
+        return result;
+    }
+
+    @ApiOperation("查找所有已被删除的网站轮播图")
+    @GetMapping("/web_swiper/find_all_deleted/{page}/{size}")
+    public Result<PageResult<Swiper>> webSwiperFindAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size){
+        Result<PageResult<Swiper>> result = new Result<>();
+        Page<Swiper> pageTemp;
+        try {
+            pageTemp = swiperService.findAllDeleted(page, size);
+            PageResult<Swiper> pageResult = new PageResult<>();
+            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
+            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
+        } catch (Exception e) {
+            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
+        }
+        return result;
+    }
+
+    @ApiOperation("查找所有未被删除的网站轮播图")
+    @GetMapping("/web_swiper/find_all_exist/{page}/{size}")
+    public Result<PageResult<Swiper>> webSwiperFindAllExist(@PathVariable("page") int page, @PathVariable("size") int size){
+        Result<PageResult<Swiper>> result = new Result<>();
+        Page<Swiper> pageTemp;
+        try {
+            pageTemp = swiperService.findAllExist(page, size);
+            PageResult<Swiper> pageResult = new PageResult<>();
+            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
+            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
+        } catch (Exception e) {
+            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
+        }
+        return result;
+    }
 
 }

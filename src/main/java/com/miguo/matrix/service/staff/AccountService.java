@@ -69,29 +69,29 @@ public class AccountService {
 
     // 更新用户，只能更新名
     public void updateName(Account account) {
-        Account account1 = this.findOne(account.getNickname());
-        account1.setUpdateAt(new Date());
-        account1.setUpdateBy("admin");
-        account1.setName(account.getName());
-        accountRepository.saveAndFlush(account1);
+        Account accountTemp = this.findOne(account.getNickname());
+        accountTemp.setUpdateAt(new Date());
+        accountTemp.setUpdateBy("admin");
+        accountTemp.setName(account.getName());
+        accountRepository.saveAndFlush(accountTemp);
     }
 
     // 更新用户，只更新权限
     public void updateLevel(Account account) {
-        Account account1 = this.findOne(account.getNickname());
-        account1.setUpdateAt(new Date());
-        account1.setUpdateBy("admin");
-        account1.setLevel(account.getLevel());
-        accountRepository.saveAndFlush(account1);
+        Account accountTemp = this.findOne(account.getNickname());
+        accountTemp.setUpdateAt(new Date());
+        accountTemp.setUpdateBy("admin");
+        accountTemp.setLevel(account.getLevel());
+        accountRepository.saveAndFlush(accountTemp);
     }
 
     // 更新用户，只更新密码
     public void updatePaswword(Account account) {
-        Account account1 = this.findOne(account.getNickname());
-        account1.setUpdateAt(new Date());
-        account1.setUpdateBy("test"); // 写死，用session代替
-        account1.setPassword(account.getPassword());
-        accountRepository.saveAndFlush(account1);
+        Account accountTemp = this.findOne(account.getNickname());
+        accountTemp.setUpdateAt(new Date());
+        accountTemp.setUpdateBy("test"); // 写死，用session代替
+        accountTemp.setPassword(account.getPassword());
+        accountRepository.saveAndFlush(accountTemp);
     }
 
     // 判断用户是否存在

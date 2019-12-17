@@ -18,7 +18,7 @@ public interface ArticleRepository extends JpaRepository<Article, String> {
     // 软删除某一篇文章
     @Modifying
     @Transactional
-    @Query(value = "update client_article set is_del = true , update_at = :#{#date},update_by = :#{#updateBy} where  id = :#{#id} ", nativeQuery = true)
+    @Query(value = "update client_article set is_del = true , update_at = :#{#date},update_by = :#{#updateBy} where id = :#{#id} ", nativeQuery = true)
     void deleteById(String id, Date date,String updateBy);
 
     // 分页查询文章内容或标题包含该关键字且未被软删除的文章
