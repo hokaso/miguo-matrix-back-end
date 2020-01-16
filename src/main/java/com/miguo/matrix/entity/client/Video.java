@@ -49,4 +49,16 @@ public class Video extends BaseEntity {
     @ApiModelProperty("创作日期")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date videoDate;
+
+    @Column(name = "video_status")
+    @ApiModelProperty("状态")
+    private String videoStatus;
+
+    @Column(name = "video_author")
+    @ApiModelProperty("创作团队")
+    private String videoAuthor;
+
+    @Column(name = "video_reviewer")
+    @ApiModelProperty("审核人")
+    private String videoReviewer;
 }

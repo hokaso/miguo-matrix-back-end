@@ -99,10 +99,10 @@ public class AccountService {
         Account account = accountRepository.findByNickname(nickname);
         if (account == null) {
             return false;
-            // 用户不存在，可以注册
+            // 用户不存在，直接返回
         } else {
             return true;
-            // 用户存在，不可以注册
+            // 用户存在，进入下一步密码判断
         }
     }
 

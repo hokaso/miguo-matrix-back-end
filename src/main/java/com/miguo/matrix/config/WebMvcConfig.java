@@ -22,6 +22,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Value("${file.path}")
     private String filePath;
 
+    private static final String WINDOWS = "win";
+
     @Bean
     public RequestMappingHandlerAdapter requestMappingHandlerAdapter(@Autowired MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter, @Autowired ContentNegotiationManager mvcContentNegotiationManager) {
         RequestMappingHandlerAdapter requestMappingHandlerAdapter = new RequestMappingHandlerAdapter();
@@ -47,9 +49,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
         /* 区分系统环境、自定义上传映射路径 */
         String os = System.getProperty("os.name");
-        if (os.toLowerCase().startsWith("win")) { // 如果是Windows系统
+        // 如果是Windows系统
+        if (os.toLowerCase().startsWith(WINDOWS)) {
             registry.addResourceHandler("/file/**")
-                    .addResourceLocations("file:F:/test/");
+                    .addResourceLocations("file:D:/File/test/");
         } else { // linux 和mac
             registry.addResourceHandler("/file/**")
                     .addResourceLocations("file:" + filePath + "/");

@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 
 /**
@@ -27,26 +29,62 @@ public class SwiperService {
     @Autowired
     private SnowflakeIdWorker snowflakeIdWorker;
 
-    // 添加轮播图
+    @Autowired
+    private HttpSession session;
+
+    /**
+     * 添加文章
+     * @param swiper
+     */
     public void add(Swiper swiper){
         swiper.setCreateAt(new Date());
         swiper.setUpdateAt(new Date());
         swiper.setId(snowflakeIdWorker.nextId());
         swiper.setIsDel(false);
-        swiper.setCreateBy("test"); // 写死，到时候用session代替
-        swiper.setUpdateBy("test"); // 写死，到时候用session代替
+        swiper.setCreateBy((String) session.getAttribute("user"));
+        swiper.setUpdateBy((String) session.getAttribute("user"));
         swiperRepository.save(swiper);
     }
 
-    // 批量软删除轮播图
-    public void delete(String ids){
-        String deleteIds[] = ids.split(",");
-        for(int i =0;i<deleteIds.length;i++){
-            swiperRepository.deleteById(deleteIds[i],new Date(),"test");  // 写死，用session代替
+    /**
+     * 批量下架轮播图
+     * @param ids
+     */
+    public void deleteSome(String ids){
+        String[] deleteIds = ids.split(",");
+        for (String deleteId : deleteIds) {
+            swiperRepository.deleteById(deleteId, new Date(), (String) session.getAttribute("user"));
         }
     }
 
-    // 查找所有已被删除的轮播图
+    /**
+     * 删除一个轮播图
+     * @param id
+     */
+    public void deleteOne(String id){
+        swiperRepository.deleteById(id);
+    }
+
+    /**
+     * 分页返回标题或内容包含某关键字的文章条目（员工使用），当关键字为空时按更新时间顺序返回所有
+     * @param keywords
+     * @param page
+     * @param size
+     * @param direction
+     * @return
+     */
+    public Page<Swiper> staffFindAllByKeywords(String keywords, int page, int size, Sort.Direction direction){
+        page--;
+        Pageable pageable = PageRequest.of(page, size, direction, "update_at");
+        return swiperRepository.staffFindSwiperByKeywords(keywords,pageable);
+    }
+
+    /**
+     * 分页返回所有已被下架的轮播图条目
+     * @param page
+     * @param size
+     * @return
+     */
     public Page<Swiper> findAllDeleted(int page,int size){
         page--;
         Pageable pageable=PageRequest.of(page,size);
@@ -54,7 +92,12 @@ public class SwiperService {
         return page1;
     }
 
-    // 查找所有未被删除的轮播图
+    /**
+     * 分页返回所有未被下架的轮播图条目
+     * @param page
+     * @param size
+     * @return
+     */
     public Page<Swiper> findAllExist(int page,int size){
         page--;
         Pageable pageable=PageRequest.of(page,size);
@@ -62,19 +105,25 @@ public class SwiperService {
         return page1;
     }
 
-    // 通过id查找该轮播图
+    /**
+     * 通过id找轮播图
+     * @param id
+     * @return
+     */
     public Swiper findOneById(String id)
     {
         return swiperRepository.findSwiperById(id);
     }
 
-    // 更新轮播图
+    /**
+     * 更新轮播图
+     * @param swiper
+     */
     public void update(Swiper swiper){
         Swiper swiperTemp=this.findOneById(swiper.getId());
         BeanUtils.copyProperties(swiper, swiperTemp);
-        swiperTemp.setUpdateBy("test"); // 写死，session代替
+        swiperTemp.setUpdateBy((String) session.getAttribute("user"));
         swiperTemp.setUpdateAt(new Date());
         swiperRepository.saveAndFlush(swiperTemp);
     }
-    
 }

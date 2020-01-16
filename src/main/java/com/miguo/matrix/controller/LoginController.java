@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Enumeration;
 
 /**
  * 功能描述：
@@ -26,32 +27,59 @@ import javax.servlet.http.HttpSession;
 @Api("登陆接口")
 @Slf4j
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/account")
 public class LoginController {
 
     @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private HttpSession session;
+
+    private static final String STAFF = "2";
+    private static final String ADMIN = "1";
     /**
      * 系统登录
      */
-    @ApiOperation(value = "普通员工登录")
-    @PostMapping("/account")
-    public Result<String> login(@RequestBody Account account, HttpServletRequest request) {
-        Account account1 = accountService.findOne(account.getNickname());
+    @ApiOperation(value = "系统登录")
+    @PostMapping("/login")
+    public Result<String> login(@RequestBody Account account) {
+        Account accountTemp = accountService.findOne(account.getNickname());
         Result<String> result = new Result<>();
-        if (account1.getPassword().equals(account.getPassword())) {
-            // 登录成功
-            result.setData("success").setMessage("login").setCode(HttpStatus.OK);
-            HttpSession session = request.getSession();
-            session.setMaxInactiveInterval(1000*60*10); // 10分钟有效期
-            session.setAttribute("staff",account.getNickname());
+        if (!accountService.isExistByNickname(account.getNickname())) {
+
+            result.setData("fail").setMessage("用户不存在！").setCode(HttpStatus.OK);
         } else {
-           // 登录失败
-            result.setData("fail").setMessage("login").setCode(HttpStatus.OK);
+            if (account.getPassword().equals((accountTemp.getPassword()))) {
+                // 管理员登陆
+                if(accountTemp.getLevel().equals(ADMIN)){
+                    result.setData("admin").setMessage("登陆成功！").setCode(HttpStatus.OK);
+                    // 200分钟有效期
+                    session.setMaxInactiveInterval(1000 * 60 * 200);
+                    session.setAttribute("user", account.getNickname());
+                }
+                // 普通员工登陆
+                else {
+                    result.setData("staff").setMessage("登陆成功！").setCode(HttpStatus.OK);
+                    // 100分钟有效期
+                    session.setMaxInactiveInterval(1000 * 60 * 100);
+                    session.setAttribute("user", account.getNickname());
+                }
+            } else {
+                result.setData("fail").setMessage("密码错误！").setCode(HttpStatus.OK);
+            }
         }
         return result;
     }
 
-    // 普通员工登录
+    @ApiOperation(value = "系统注销")
+    @PostMapping("/logout")
+    public Result<String> logout() {
+        Result<String> result = new Result<>();
+        Enumeration em = session.getAttributeNames();
+        while (em.hasMoreElements()) {
+            session.removeAttribute(em.nextElement().toString());
+        }
+        return result.setData("logout").setMessage("已经注销！").setCode(HttpStatus.OK);
+    }
 }

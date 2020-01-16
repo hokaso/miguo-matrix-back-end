@@ -1,6 +1,5 @@
 package com.miguo.matrix.service.client;
 
-import com.miguo.matrix.entity.client.Article;
 import com.miguo.matrix.entity.client.Video;
 import com.miguo.matrix.repository.client.VideoRepository;
 import com.miguo.matrix.utils.SnowflakeIdWorker;
@@ -9,73 +8,130 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 
+/**
+ * @author Hocassian
+ */
 @Service
 public class VideoService {
+
     @Autowired
     private SnowflakeIdWorker snowflakeIdWorker;
+
     @Autowired
     private VideoRepository videoRepository;
 
-    // 批量软删除视频
+    @Autowired
+    private HttpSession session;
+
+    /**
+     * 批量下架视频
+     * @param ids
+     */
     public void delete(String ids){
-        String deleteIds[] = ids.split(",");
-        for(int i =0;i<deleteIds.length;i++){
-            videoRepository.deleteById(deleteIds[i],new Date(),"test");  // 写死，用session代替
+        String[] deleteIds = ids.split(",");
+        for (String deleteId : deleteIds) {
+            videoRepository.deleteSomeById(deleteId, new Date(), (String) session.getAttribute("user"));
         }
 
     }
 
-    // 添加视频
+    /**
+     * 添加视频
+     * @param video
+     */
     public void add(Video video){
        video.setVideoDate(new Date());
        video.setCreateAt(new Date());
        video.setUpdateAt(new Date());
-       video.setUpdateBy("test"); // 写死，用session代替
-       video.setCreateBy("test"); // 写死，用session代替
+       video.setUpdateBy((String) session.getAttribute("user"));
+       video.setCreateBy((String) session.getAttribute("user"));
        video.setId(snowflakeIdWorker.nextId());
        video.setIsDel(false);
        videoRepository.save(video);
     }
 
-    // 查询 标题或者视频内容 包含 该关键字的所有视频
+    /**
+     * 分页返回标题或内容包含某关键字且未被下架的视频条目（客户使用）
+     * @param keywords
+     * @param page
+     * @param size
+     * @return
+     */
     public Page<Video> findAllByKeywords(String keywords,int page,int size){
         page--;
         Pageable pageable = PageRequest.of(page, size);
-        Page<Video> pageTemp = videoRepository.findVideoByKeywords(keywords,pageable);
+        return videoRepository.findVideoByKeywords(keywords,pageable);
+    }
+
+    /**
+     * 分页返回标题或内容包含某关键字的视频条目（员工使用），当关键字为空时按更新时间顺序返回所有
+     * @param keywords
+     * @param page
+     * @param size
+     * @param direction
+     * @return
+     */
+    public Page<Video> staffFindAllByKeywords(String keywords, int page, int size, Sort.Direction direction){
+        page--;
+        Pageable pageable = PageRequest.of(page, size, direction, "update_at");
+        Page<Video> pageTemp = videoRepository.staffFindVideoByKeywords(keywords,pageable);
         return pageTemp;
     }
 
-    // 查找所有已被删除的视频
+    /**
+     * 分页返回所有已被下架的视频条目
+     * @param page
+     * @param size
+     * @return
+     */
     public Page<Video> findAllDeleted(int page,int size){
         Pageable pageable = PageRequest.of(page,size);
-        Page<Video> pageTemp = videoRepository.findAllDeletedVideo(pageable);
-        return pageTemp;
+        return videoRepository.findAllDeletedVideo(pageable);
     }
 
-    // 查找所有未被删除的视频
+    /**
+     * 分页返回所有未被下架的视频条目
+     * @param page
+     * @param size
+     * @return
+     */
     public Page<Video> findAllExist(int page,int size){
         Pageable pageable = PageRequest.of(page,size);
-        Page<Video> pageTemp = videoRepository.findAllExistVideo(pageable);
-        return pageTemp;
+        return videoRepository.findAllExistVideo(pageable);
     }
 
-    // 通过id找视频
+    /**
+     * 通过id找视频
+     * @param id
+     * @return
+     */
     public Video findOneById(String id){
-
         return videoRepository.findVideoById(id);
     }
 
-    // 更新视频，注意video_date(创作日期)不能被更新
+    /**
+     * 更新视频
+     * @param video
+     */
     public void update(Video video){
         Video videoTemp=this.findOneById(video.getId());
         BeanUtils.copyProperties(video, videoTemp);
         videoTemp.setUpdateAt(new Date());
-        videoTemp.setUpdateBy("test"); // 写死，用session代替
+        videoTemp.setUpdateBy((String) session.getAttribute("user"));
         videoRepository.saveAndFlush(videoTemp);
     }
 
+    /**
+     * 删除一个视频
+     * @param id
+     */
+    public void deleteOne(String id){
+        videoRepository.deleteById(id);
+    }
 }

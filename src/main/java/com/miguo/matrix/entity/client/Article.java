@@ -34,4 +34,20 @@ public class Article extends BaseEntity {
     @Column(name = "title")
     @ApiModelProperty("标题")
     private String title;
+
+    @Column(name = "author")
+    @ApiModelProperty("作者")
+    private String author;
+
+    @Column(name = "reviewer")
+    @ApiModelProperty("审核人")
+    private String reviewer;
+
+    @Column(name = "readings")
+    @ApiModelProperty("阅读量")
+    private Integer readings;
+
+    @Column(name = "status")
+    @ApiModelProperty("状态")
+    private String status;
 }

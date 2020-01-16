@@ -15,6 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * @author Hocassian
+ */
 @Api("用户专用接口，无需登陆，对视频、文章的查看")
 @Slf4j
 @RestController

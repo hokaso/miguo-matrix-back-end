@@ -14,11 +14,25 @@ import java.util.Date;
 @Repository
 public interface SwiperRepository extends JpaRepository<Swiper,String> {
 
-    // 软删除某一张轮播图
+    /**
+     * 通过把「is_del」改为「true」来下架多个轮播图（并非删除）
+     * @param id
+     * @param date
+     * @param updateBy
+     */
     @Modifying
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Query(value = "update client_swiper set is_del = true , update_at = :#{#date},update_by = :#{#updateBy} where id = :#{#id} ", nativeQuery = true)
     void deleteById(String id, Date date, String updateBy);
+
+    /**
+     * 分页返回标题或内容包含某关键字的文章条目（员工使用），当关键字为空时按更新时间顺序返回所有
+     * @param keywords
+     * @param pageable
+     * @return
+     */
+    @Query(value = "select * from client_swiper WHERE swiper_name LIKE %:#{#keywords}%",nativeQuery = true)
+    Page<Swiper> staffFindSwiperByKeywords(String keywords,Pageable pageable);
 
     // 查找所有已被软删除的轮播图
     @Query(value = "select * from client_swiper where is_del = true",nativeQuery = true)

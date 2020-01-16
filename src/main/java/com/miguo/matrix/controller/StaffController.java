@@ -2,6 +2,7 @@ package com.miguo.matrix.controller;
 
 import com.miguo.matrix.dto.PageResult;
 import com.miguo.matrix.dto.Result;
+import com.miguo.matrix.dto.SearchDto;
 import com.miguo.matrix.dto.staff.UpdatePasswordDto;
 import com.miguo.matrix.entity.client.Article;
 import com.miguo.matrix.entity.client.Swiper;
@@ -19,6 +20,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
+
+/**
+ * @author Hocassian
+ */
 @Api("员工管理接口，对视频、文章进行增删改")
 @Slf4j
 @RestController
@@ -37,6 +43,9 @@ public class StaffController {
     @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private HttpSession session;
+
     //    -----------以下为员工信息的增删改查----------
 
     @ApiOperation(value = "修改员工名称")
@@ -45,7 +54,7 @@ public class StaffController {
         Result<String> result = new Result<>();
         result.setMessage("update_name").setCode(HttpStatus.OK);
         try {
-            Account account = accountService.findOne("test"); // 写死，到时候用session代替
+            Account account = accountService.findOne((String) session.getAttribute("user"));
             account.setName(name);
             accountService.updateName(account);
             result.setData("success");
@@ -62,7 +71,7 @@ public class StaffController {
         Result<String> result = new Result<>();
         result.setMessage("update_password").setCode(HttpStatus.OK);
         try {
-            Account account = accountService.findOne("test"); // 写死，到时候用session代替
+            Account account = accountService.findOne((String) session.getAttribute("user"));
 
             if (account.getPassword().equals(updatePasswordDto.getBeforePassword())) {
                 // 用户输入的原密码正确
@@ -78,6 +87,7 @@ public class StaffController {
 
         return result;
     }
+
     //    -----------以下为文章的增删改查----------
 
     @ApiOperation("文章的增加")
@@ -94,8 +104,7 @@ public class StaffController {
         return result;
     }
 
-
-    @ApiOperation("批量软删除文章")
+    @ApiOperation("批量下架文章")
     @DeleteMapping("/article/delete/{ids}")
     public Result<String> articleDelete(@PathVariable("ids") String ids){
         Result<String> result = new Result<>();
@@ -103,6 +112,20 @@ public class StaffController {
         try{
            articleService.delete(ids);
            result.setData("success");
+        }catch (Exception e){
+            result.setData("fail");
+        }
+        return result;
+    }
+
+    @ApiOperation("删除单篇文章")
+    @DeleteMapping("/article/delete_one/{id}")
+    public Result<String> articleDeleteOne(@PathVariable("id") String id){
+        Result<String> result = new Result<>();
+        result.setCode(HttpStatus.OK).setMessage("delete");
+        try{
+            articleService.deleteOne(id);
+            result.setData("success");
         }catch (Exception e){
             result.setData("fail");
         }
@@ -140,7 +163,7 @@ public class StaffController {
     }
 
     @ApiOperation("分页查找所有未被删除的文章")
-    @GetMapping("/article/find_all_deleted/{page}/{size}")
+    @GetMapping("/article/find_all_exist/{page}/{size}")
     public Result<PageResult<Article>> articleFindAllExist(@PathVariable("page") int page, @PathVariable("size") int size) {
         Result<PageResult<Article>> result = new Result<>();
         Page<Article> pageTemp;
@@ -152,6 +175,28 @@ public class StaffController {
         } catch (Exception e) {
             result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
         }
+        return result;
+    }
+
+    @ApiOperation("分页查找所有包含关键字的文章")
+    @PostMapping("/article/find_all_by_keywords")
+    public Result<PageResult<Article>> articleFindAllByKeywords(@RequestBody SearchDto searchDto) {
+        Result<PageResult<Article>> result = new Result<>();
+        Page<Article> page;
+        try {
+            if (searchDto.getKeywords() == null || searchDto.getKeywords().equals("")) {
+                page = articleService.staffFindAllByKeywords("", searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+                // 当关键字为空时，查询所有
+            } else {
+                page = articleService.staffFindAllByKeywords(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+            }
+            PageResult<Article> pageResult = new PageResult<>();
+            pageResult.setSize(searchDto.getSize()).setPage(searchDto.getPage()).setData(page.getContent()).setTotal(page.getTotalElements());
+            result.setMessage("success").setCode(HttpStatus.OK).setData(pageResult);
+        } catch (Exception e) {
+            result.setMessage("fail").setCode(HttpStatus.OK).setData(null);
+        }
+
         return result;
     }
 
@@ -170,7 +215,7 @@ public class StaffController {
         return result;
     }
 
-    @ApiOperation("视频的批量软删除")
+    @ApiOperation("视频的批量下架")
     @DeleteMapping("/video/delete/{ids}")
     public Result<String> videoDelete(@PathVariable("ids") String ids) {
         Result<String> result =new Result<>();
@@ -179,6 +224,20 @@ public class StaffController {
             result.setCode(HttpStatus.OK).setMessage("delete").setData("success");
         }catch (Exception e){
             result.setCode(HttpStatus.OK).setMessage("delete").setData("fail");
+        }
+        return result;
+    }
+
+    @ApiOperation("删除单个视频")
+    @DeleteMapping("/video/delete_one/{id}")
+    public Result<String> videoDeleteOne(@PathVariable("id") String id){
+        Result<String> result = new Result<>();
+        result.setCode(HttpStatus.OK).setMessage("delete");
+        try{
+            videoService.deleteOne(id);
+            result.setData("success");
+        }catch (Exception e){
+            result.setData("fail");
         }
         return result;
     }
@@ -228,6 +287,28 @@ public class StaffController {
         return result;
     }
 
+    @ApiOperation("分页查找所有模糊查询的视频")
+    @PostMapping("/video/find_all_by_keywords")
+    public Result<PageResult<Video>> videoFindAllByKeywords(@RequestBody SearchDto searchDto) {
+        Result<PageResult<Video>> result = new Result<>();
+        Page<Video> page;
+        try {
+            if (searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())) {
+                page = videoService.staffFindAllByKeywords("", searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+                // 当关键字为空时，查询所有
+            } else {
+                page = videoService.staffFindAllByKeywords(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+            }
+            PageResult<Video> pageResult = new PageResult<>();
+            pageResult.setSize(searchDto.getSize()).setPage(searchDto.getPage()).setData(page.getContent()).setTotal(page.getTotalElements());
+            result.setMessage("success").setCode(HttpStatus.OK).setData(pageResult);
+        } catch (Exception e) {
+            result.setMessage("fail").setCode(HttpStatus.OK).setData(null);
+        }
+
+        return result;
+    }
+
     // ----------以下为网站轮播图的增删改-------
 
     @ApiOperation("网站轮播图的添加")
@@ -243,12 +324,12 @@ public class StaffController {
         return result;
     }
 
-    @ApiOperation("网站轮播图的批量软删除")
+    @ApiOperation("网站轮播图的批量下架")
     @DeleteMapping("/web_swiper/delete/{ids}")
     public Result<String> webSwiperDelete(@PathVariable("ids") String ids) {
         Result<String> result =new Result<>();
         try{
-            swiperService.delete(ids);
+            swiperService.deleteSome(ids);
             result.setCode(HttpStatus.OK).setMessage("delete").setData("success");
         }catch (Exception e){
             result.setCode(HttpStatus.OK).setMessage("delete").setData("fail");
@@ -269,7 +350,7 @@ public class StaffController {
         return result;
     }
 
-    @ApiOperation("分页查找所有已被删除的网站轮播图")
+    @ApiOperation("分页查找所有已被下架的网站轮播图")
     @GetMapping("/web_swiper/find_all_deleted/{page}/{size}")
     public Result<PageResult<Swiper>> webSwiperFindAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size){
         Result<PageResult<Swiper>> result = new Result<>();
@@ -298,6 +379,28 @@ public class StaffController {
         } catch (Exception e) {
             result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
         }
+        return result;
+    }
+
+    @ApiOperation("分页查找所有模糊查询的视频")
+    @PostMapping("/web_swiper/find_all_by_keywords")
+    public Result<PageResult<Swiper>> webSwiperFindAllByKeywords(@RequestBody SearchDto searchDto) {
+        Result<PageResult<Swiper>> result = new Result<>();
+        Page<Swiper> page;
+        try {
+            if (searchDto.getKeywords() == null || searchDto.getKeywords().equals("")) {
+                page = swiperService.staffFindAllByKeywords("", searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+                // 当关键字为空时，查询所有
+            } else {
+                page = swiperService.staffFindAllByKeywords(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+            }
+            PageResult<Swiper> pageResult = new PageResult<>();
+            pageResult.setSize(searchDto.getSize()).setPage(searchDto.getPage()).setData(page.getContent()).setTotal(page.getTotalElements());
+            result.setMessage("success").setCode(HttpStatus.OK).setData(pageResult);
+        } catch (Exception e) {
+            result.setMessage("fail").setCode(HttpStatus.OK).setData(null);
+        }
+
         return result;
     }
 

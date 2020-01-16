@@ -34,4 +34,8 @@ public class Activity extends BaseEntity {
     @Column(name = "activity_profile")
     @ApiModelProperty("活动简介")
     private String activityProfile;
+
+    @Column(name = "activity_active")
+    @ApiModelProperty("活动是否活跃")
+    private Boolean activityActive;
 }
