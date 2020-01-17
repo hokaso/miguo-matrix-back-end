@@ -51,6 +51,6 @@ public class PictureController {
             e.printStackTrace();
         }
         System.out.println("返回的文件URL：" + fileName);
-        return result.setData(fileName).setMessage("已经注销！").setCode(HttpStatus.OK);
+        return result.setData(fileName).setMessage("上传成功！").setCode(HttpStatus.OK);
     }
 }

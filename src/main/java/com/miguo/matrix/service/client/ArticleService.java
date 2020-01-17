@@ -35,8 +35,9 @@ public class ArticleService {
     /**
      * 添加文章
      * @param article
+     * @return
      */
-    public void add(Article article){
+    public String add(Article article){
         article.setCreateAt(new Date());
         article.setUpdateAt(new Date());
         article.setId(snowflakeIdWorker.nextId());
@@ -44,6 +45,7 @@ public class ArticleService {
         article.setCreateBy((String) session.getAttribute("user"));
         article.setUpdateBy((String) session.getAttribute("user"));
         articleRepository.save(article);
+        return article.getId();
     }
 
     /**

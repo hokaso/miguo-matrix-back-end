@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.Optional;
 
 /**
  * @author Hocassian
@@ -96,8 +97,8 @@ public class StaffController {
         Result<String> result = new Result<>();
         result.setMessage("add").setCode(HttpStatus.OK);
         try{
-            articleService.add(article);
-            result.setData("success");
+            String id = articleService.add(article);
+            result.setData(id).setCode(HttpStatus.OK).setMessage("success");
         }catch (Exception e){
             result.setData("fail");
         }
@@ -196,7 +197,20 @@ public class StaffController {
         } catch (Exception e) {
             result.setMessage("fail").setCode(HttpStatus.OK).setData(null);
         }
+        return result;
+    }
 
+    @ApiOperation("获取某一篇文章")
+    @GetMapping("/article/find_one_by_id/{id}")
+    public Result<Article> findArticleById(@PathVariable("id") String id){
+        Result<Article> result = new Result<>();
+        try {
+            Article list = articleService.findOneById(id);
+            result.setMessage("success").setCode(HttpStatus.OK).setData(list);
+
+        } catch (Exception e) {
+            result.setMessage("fail").setCode(HttpStatus.OK).setData(null);
+        }
         return result;
     }
 
@@ -309,6 +323,20 @@ public class StaffController {
         return result;
     }
 
+    @ApiOperation("获取某一个视频")
+    @GetMapping("/video/find_one_by_id/{id}")
+    public Result<Video> findVideoById(@PathVariable("id") String id){
+        Result<Video> result = new Result<>();
+        try {
+            Video list = videoService.findOneById(id);
+            result.setMessage("success").setCode(HttpStatus.OK).setData(list);
+
+        } catch (Exception e) {
+            result.setMessage("fail").setCode(HttpStatus.OK).setData(null);
+        }
+        return result;
+    }
+
     // ----------以下为网站轮播图的增删改-------
 
     @ApiOperation("网站轮播图的添加")
@@ -401,6 +429,20 @@ public class StaffController {
             result.setMessage("fail").setCode(HttpStatus.OK).setData(null);
         }
 
+        return result;
+    }
+
+    @ApiOperation("获取某一个轮播图")
+    @GetMapping("/web_swiper/find_one_by_id/{id}")
+    public Result<Swiper> findSwiperById(@PathVariable("id") String id){
+        Result<Swiper> result = new Result<>();
+        try {
+            Swiper list = swiperService.findOneById(id);
+            result.setMessage("success").setCode(HttpStatus.OK).setData(list);
+
+        } catch (Exception e) {
+            result.setMessage("fail").setCode(HttpStatus.OK).setData(null);
+        }
         return result;
     }
 
