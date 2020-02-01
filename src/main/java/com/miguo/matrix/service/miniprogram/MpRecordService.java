@@ -8,9 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 功能描述：
@@ -27,54 +30,39 @@ public class MpRecordService {
     @Autowired
     private SnowflakeIdWorker snowflakeIdWorker;
 
-    // 添加投票记录
+    @Autowired
+    private HttpSession session;
+
     public void add(Record record){
         record.setCreateAt(new Date());
         record.setUpdateAt(new Date());
         record.setId(snowflakeIdWorker.nextId());
         record.setIsDel(false);
-        record.setCreateBy("test"); // 写死，到时候用session代替
-        record.setUpdateBy("test"); // 写死，到时候用session代替
+        record.setCreateBy((String) session.getAttribute("user"));
+        record.setUpdateBy((String) session.getAttribute("user"));
         recordRepository.save(record);
     }
 
-    // 批量软删除投票记录
-    public void delete(String ids){
-        String deleteIds[] = ids.split(",");
-        for(int i =0;i<deleteIds.length;i++){
-            recordRepository.deleteById(deleteIds[i],new Date(),"test");  // 写死，用session代替
-        }
+    public void delete(List<Record> list){
+        recordRepository.deleteInBatch(list);
     }
 
-    // 查找所有已被删除的投票记录
-    public Page<Record> findAllDeleted(int page,int size){
+    public Page<Record> findRecordByKeywords(String keywords, int page, int size, Sort.Direction direction){
         page--;
-        Pageable pageable=PageRequest.of(page,size);
-        Page<Record> pageTemp = recordRepository.findAllDeletedRecord(pageable);
-        return pageTemp;
+        Pageable pageable = PageRequest.of(page, size, direction, "update_at");
+        return recordRepository.findRecordByKeywords(keywords,pageable);
     }
 
-    // 查找所有未被删除的投票记录
-    public Page<Record> findAllExist(int page,int size){
-        page--;
-        Pageable pageable=PageRequest.of(page,size);
-        Page<Record> pageTemp = recordRepository.findAllExistRecord(pageable);
-        return pageTemp;
-    }
-
-    // 通过id查找该投票记录
     public Record findOneById(String id)
     {
         return recordRepository.findRecordById(id);
     }
 
-    // 更新投票记录
     public void update(Record record){
         Record recordTemp=this.findOneById(record.getId());
         BeanUtils.copyProperties(record, recordTemp);
-        recordTemp.setUpdateBy("test"); // 写死，session代替
+        recordTemp.setUpdateBy((String) session.getAttribute("user"));
         recordTemp.setUpdateAt(new Date());
         recordRepository.saveAndFlush(recordTemp);
     }
-    
 }

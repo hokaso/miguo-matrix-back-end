@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.List;
 
@@ -28,65 +30,70 @@ public class MpActivityService {
     @Autowired
     private SnowflakeIdWorker snowflakeIdWorker;
 
-    // 添加活动
+    @Autowired
+    private HttpSession session;
+
+    /**
+     * 添加活动
+     * @param activity
+     */
     public void add(Activity activity){
         activity.setCreateAt(new Date());
         activity.setUpdateAt(new Date());
         activity.setId(snowflakeIdWorker.nextId());
         activity.setIsDel(false);
-        activity.setCreateBy("test"); // 写死，到时候用session代替
-        activity.setUpdateBy("test"); // 写死，到时候用session代替
+        activity.setCreateBy((String) session.getAttribute("user"));
+        activity.setUpdateBy((String) session.getAttribute("user"));
         activityRepository.save(activity);
     }
 
-    // 批量软删除活动
-    public void delete(String ids){
-        String deleteIds[] = ids.split(",");
-        for(int i =0;i<deleteIds.length;i++){
-            activityRepository.deleteById(deleteIds[i],new Date(),"test");  // 写死，用session代替
-        }
+    /**
+     * 删除&批量删除
+     * @param list
+     */
+    public void delete(List<Activity> list){
+        activityRepository.deleteInBatch(list);
     }
 
-    // 分页查找所有已被删除的活动
-    public Page<Activity> findAllDeleted(int page,int size){
+    /**
+     * 分页查找所有标题或者内容包含该关键字且未被软删除的活动（录入活动页面用,「keywords」为空时返回所有）
+     * @param page
+     * @param size
+     * @return
+     */
+    public Page<Activity> findAllActivityByKeywords(String keywords, int page, int size, Sort.Direction direction){
         page--;
-        Pageable pageable=PageRequest.of(page,size);
-        Page<Activity> pageTemp = activityRepository.findAllDeletedActivity(pageable);
-        return pageTemp;
+        Pageable pageable = PageRequest.of(page, size, direction, "update_at");
+        return activityRepository.findActivityByKeywords(keywords,pageable);
     }
 
-    // 分页查找所有未被删除的活动
-    public Page<Activity> findAllExist(int page,int size){
-        page--;
-        Pageable pageable=PageRequest.of(page,size);
-        Page<Activity> pageTemp = activityRepository.findAllExistActivity(pageable);
-        return pageTemp;
-    }
-
-    // 不分页查找所有标题或者内容包含该关键字的未被删除的活动
+    /**
+     * 查找所有标题或者内容包含该关键字的活动（不分页，输入活动相关信息时联结用）
+     * @param keywords
+     * @return
+     */
     public List<Activity> findAllActivityByKeywordsFromInput (String keywords) {
         return activityRepository.findActivityByKeywordsFromInput(keywords);
     }
 
-    // 分页查找所有标题或者内容包含该关键字的未被删除的活动
-    public Page<Activity> findAllActivityByKeywords(String keywords,int page,int size){
-        page--;
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Activity> pageTemp = activityRepository.findActivityByKeywords(keywords,pageable);
-        return pageTemp;
-    }
-
-    // 通过id查找该活动
+    /**
+     * 通过id查找活动
+     * @param id
+     * @return
+     */
     public Activity findOneById(String id)
     {
         return activityRepository.findActivityById(id);
     }
 
-    // 更新活动
+    /**
+     * 更新活动
+     * @param activity
+     */
     public void update(Activity activity){
         Activity activityTemp=this.findOneById(activity.getId());
         BeanUtils.copyProperties(activity, activityTemp);
-        activityTemp.setUpdateBy("test"); // 写死，session代替
+        activityTemp.setUpdateBy((String) session.getAttribute("user"));
         activityTemp.setUpdateAt(new Date());
         activityRepository.saveAndFlush(activityTemp);
     }

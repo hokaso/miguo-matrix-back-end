@@ -8,9 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 功能描述：
@@ -27,52 +30,46 @@ public class MpGroupService {
     @Autowired
     private SnowflakeIdWorker snowflakeIdWorker;
 
-    // 添加投票对象
+    @Autowired
+    private HttpSession session;
+
+    /**
+     * 添加投票对象
+     * @param group
+     */
     public void add(Group group){
         group.setCreateAt(new Date());
         group.setUpdateAt(new Date());
         group.setId(snowflakeIdWorker.nextId());
         group.setIsDel(false);
-        group.setCreateBy("test"); // 写死，到时候用session代替
-        group.setUpdateBy("test"); // 写死，到时候用session代替
+        group.setCreateBy((String) session.getAttribute("user"));
+        group.setUpdateBy((String) session.getAttribute("user"));
         groupRepository.save(group);
     }
 
-    // 批量软删除投票对象
-    public void delete(String ids){
-        String deleteIds[] = ids.split(",");
-        for(int i =0;i<deleteIds.length;i++){
-            groupRepository.deleteById(deleteIds[i],new Date(),"test");  // 写死，用session代替
-        }
+    /**
+     * 删除&批量删除
+     * @param list
+     */
+    public void delete(List<Group> list){
+        groupRepository.deleteInBatch(list);
     }
 
-    // 查找所有已被删除的投票对象
-    public Page<Group> findAllDeleted(int page,int size){
+    public Page<Group> findGroupByKeywords(String keywords, int page, int size, Sort.Direction direction){
         page--;
-        Pageable pageable=PageRequest.of(page,size);
-        Page<Group> pageTemp = groupRepository.findAllDeletedGroup(pageable);
-        return pageTemp;
+        Pageable pageable = PageRequest.of(page, size, direction, "update_at");
+        return groupRepository.findGroupByKeywords(keywords,pageable);
     }
 
-    // 查找所有未被删除的投票对象
-    public Page<Group> findAllExist(int page,int size){
-        page--;
-        Pageable pageable=PageRequest.of(page,size);
-        Page<Group> pageTemp = groupRepository.findAllExistGroup(pageable);
-        return pageTemp;
-    }
-
-    // 通过id查找该投票对象
     public Group findOneById(String id)
     {
         return groupRepository.findGroupById(id);
     }
 
-    // 更新投票对象
     public void update(Group group){
         Group groupTemp=this.findOneById(group.getId());
         BeanUtils.copyProperties(group, groupTemp);
-        groupTemp.setUpdateBy("test"); // 写死，session代替
+        groupTemp.setUpdateBy((String) session.getAttribute("user"));
         groupTemp.setUpdateAt(new Date());
         groupRepository.saveAndFlush(groupTemp);
     }

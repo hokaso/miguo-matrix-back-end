@@ -8,9 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 功能描述：
@@ -27,52 +30,38 @@ public class MpMerchantService {
     @Autowired
     private SnowflakeIdWorker snowflakeIdWorker;
 
-    // 添加赞助商对象
+    @Autowired
+    private HttpSession session;
+
     public void add(Merchant merchant){
         merchant.setCreateAt(new Date());
         merchant.setUpdateAt(new Date());
         merchant.setId(snowflakeIdWorker.nextId());
         merchant.setIsDel(false);
-        merchant.setCreateBy("test"); // 写死，到时候用session代替
-        merchant.setUpdateBy("test"); // 写死，到时候用session代替
+        merchant.setCreateBy((String) session.getAttribute("user"));
+        merchant.setUpdateBy((String) session.getAttribute("user"));
         merchantRepository.save(merchant);
     }
 
-    // 批量软删除赞助商对象
-    public void delete(String ids){
-        String deleteIds[] = ids.split(",");
-        for(int i =0;i<deleteIds.length;i++){
-            merchantRepository.deleteById(deleteIds[i],new Date(),"test");  // 写死，用session代替
-        }
+    public void delete(List<Merchant> list){
+        merchantRepository.deleteInBatch(list);
     }
 
-    // 查找所有已被删除的赞助商对象
-    public Page<Merchant> findAllDeleted(int page,int size){
+    public Page<Merchant> findMerchantByKeywords(String keywords, int page, int size, Sort.Direction direction){
         page--;
-        Pageable pageable=PageRequest.of(page,size);
-        Page<Merchant> pageTemp = merchantRepository.findAllDeletedMerchant(pageable);
-        return pageTemp;
+        Pageable pageable = PageRequest.of(page, size, direction, "update_at");
+        return merchantRepository.findMerchantByKeywords(keywords,pageable);
     }
 
-    // 查找所有未被删除的赞助商对象
-    public Page<Merchant> findAllExist(int page,int size){
-        page--;
-        Pageable pageable=PageRequest.of(page,size);
-        Page<Merchant> pageTemp = merchantRepository.findAllExistMerchant(pageable);
-        return pageTemp;
-    }
-
-    // 通过id查找该赞助商对象
     public Merchant findOneById(String id)
     {
         return merchantRepository.findMerchantById(id);
     }
 
-    // 更新赞助商对象
     public void update(Merchant merchant){
         Merchant merchantTemp=this.findOneById(merchant.getId());
         BeanUtils.copyProperties(merchant, merchantTemp);
-        merchantTemp.setUpdateBy("test"); // 写死，session代替
+        merchantTemp.setUpdateBy((String) session.getAttribute("user"));
         merchantTemp.setUpdateAt(new Date());
         merchantRepository.saveAndFlush(merchantTemp);
     }

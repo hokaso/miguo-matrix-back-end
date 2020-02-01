@@ -11,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
+/**
+ * @author Hocassian
+ */
 @Repository
 public interface SwiperRepository extends JpaRepository<Swiper,String> {
 

@@ -59,11 +59,11 @@ public class StaffMiniProgramController {
     }
 
     @ApiOperation("小程序轮播图的批量软删除")
-    @DeleteMapping("/mp_swiper/delete/{ids}")
-    public Result<String> mpSwiperDelete(@PathVariable("ids") String ids) {
+    @PostMapping("/mp_swiper/delete")
+    public Result<String> mpSwiperDelete(@RequestBody List<Swiper> list) {
         Result<String> result =new Result<>();
         try{
-            swiperService.delete(ids);
+            swiperService.delete(list);
             result.setCode(HttpStatus.OK).setMessage("delete").setData("success");
         }catch (Exception e){
             result.setCode(HttpStatus.OK).setMessage("delete").setData("fail");
@@ -84,34 +84,22 @@ public class StaffMiniProgramController {
         return result;
     }
 
-    @ApiOperation("查找所有已被删除的小程序轮播图")
-    @GetMapping("/mp_swiper/find_all_deleted/{page}/{size}")
-    public Result<PageResult<Swiper>> mpSwiperFindAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size){
+    @ApiOperation("分页查找所有标题或者内容包含该关键字的小程序轮播图（录入活动页面用,「keywords」为空时返回所有）")
+    @PostMapping("/mp_swiper/find_all_by_keywords")
+    public Result<PageResult<Swiper>> mpSwiperFindAll(@RequestBody SearchDto searchDto) {
         Result<PageResult<Swiper>> result = new Result<>();
-        Page<Swiper> pageTemp;
+        Page<Swiper> page;
         try {
-            pageTemp = swiperService.findAllDeleted(page, size);
+            if (searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())) {
+                page = swiperService.findSwiperByKeywords("", searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+            } else {
+                page = swiperService.findSwiperByKeywords(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+            }
             PageResult<Swiper> pageResult = new PageResult<>();
-            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
-            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
+            pageResult.setSize(searchDto.getSize()).setPage(searchDto.getPage()).setData(page.getContent()).setTotal(page.getTotalElements());
+            result.setMessage("success").setCode(HttpStatus.OK).setData(pageResult);
         } catch (Exception e) {
-            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
-        }
-        return result;
-    }
-
-    @ApiOperation("查找所有未被删除的小程序轮播图")
-    @GetMapping("/mp_swiper/find_all_exist/{page}/{size}")
-    public Result<PageResult<Swiper>> mpSwiperFindAllExist(@PathVariable("page") int page, @PathVariable("size") int size){
-        Result<PageResult<Swiper>> result = new Result<>();
-        Page<Swiper> pageTemp;
-        try {
-            pageTemp = swiperService.findAllExist(page, size);
-            PageResult<Swiper> pageResult = new PageResult<>();
-            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
-            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
-        } catch (Exception e) {
-            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
+            result.setMessage("fail").setCode(HttpStatus.OK).setData(null);
         }
         return result;
     }
@@ -131,12 +119,12 @@ public class StaffMiniProgramController {
         return result;
     }
 
-    @ApiOperation("小程序活动的批量软删除")
-    @DeleteMapping("/mp_activity/delete/{ids}")
-    public Result<String> mpActivityDelete(@PathVariable("ids") String ids) {
+    @ApiOperation("小程序活动的批量删除")
+    @PostMapping("/mp_activity/delete")
+    public Result<String> mpActivityDelete(@RequestBody List<Activity> list) {
         Result<String> result =new Result<>();
         try{
-            activityService.delete(ids);
+            activityService.delete(list);
             result.setCode(HttpStatus.OK).setMessage("delete").setData("success");
         }catch (Exception e){
             result.setCode(HttpStatus.OK).setMessage("delete").setData("fail");
@@ -157,49 +145,16 @@ public class StaffMiniProgramController {
         return result;
     }
 
-    @ApiOperation("分页查找所有已被删除的小程序活动")
-    @GetMapping("/mp_activity/find_all_deleted/{page}/{size}")
-    public Result<PageResult<Activity>> mpActivityFindAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size){
-        Result<PageResult<Activity>> result = new Result<>();
-        Page<Activity> pageTemp;
-        try {
-            pageTemp = activityService.findAllDeleted(page, size);
-            PageResult<Activity> pageResult = new PageResult<>();
-            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
-            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
-        } catch (Exception e) {
-            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
-        }
-        return result;
-    }
-
-    @ApiOperation("分页查找所有未被删除的小程序活动")
-    @GetMapping("/mp_activity/find_all_exist/{page}/{size}")
-    public Result<PageResult<Activity>> mpActivityFindAllExist(@PathVariable("page") int page, @PathVariable("size") int size){
-        Result<PageResult<Activity>> result = new Result<>();
-        Page<Activity> pageTemp;
-        try {
-            pageTemp = activityService.findAllExist(page, size);
-            PageResult<Activity> pageResult = new PageResult<>();
-            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
-            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
-        } catch (Exception e) {
-            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
-        }
-        return result;
-    }
-
-    @ApiOperation("分页查找所有标题或者内容包含该关键字的未被删除的活动")
-    @PostMapping("/mp_activity/find_all_exist_by_keyowrds")
+    @ApiOperation("分页查找所有标题或者内容包含该关键字的活动（录入活动页面用,「keywords」为空时返回所有）")
+    @PostMapping("/mp_activity/find_all_by_keywords")
     public Result<PageResult<Activity>> mpActivityFindAll(@RequestBody SearchDto searchDto) {
         Result<PageResult<Activity>> result = new Result<>();
         Page<Activity> page;
         try {
-            if (searchDto.getKeywords() == null || searchDto.getKeywords().equals("")) {
-                page = activityService.findAllActivityByKeywords("", searchDto.getPage(), searchDto.getSize());
-                // 当关键字为空时，查询所有
+            if (searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())) {
+                page = activityService.findAllActivityByKeywords("", searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
             } else {
-                page = activityService.findAllActivityByKeywords(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize());
+                page = activityService.findAllActivityByKeywords(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
             }
             PageResult<Activity> pageResult = new PageResult<>();
             pageResult.setSize(searchDto.getSize()).setPage(searchDto.getPage()).setData(page.getContent()).setTotal(page.getTotalElements());
@@ -210,14 +165,13 @@ public class StaffMiniProgramController {
         return result;
     }
 
-    @ApiOperation("不分页查找所有标题或者内容包含该关键字的未被删除的活动")
-    @PostMapping("/mp_activity/find_all_exist_by_keyowrds_from_input")
+    @ApiOperation("不分页查找所有标题或者内容包含该关键字的活动")
+    @PostMapping("/mp_activity/find_all_by_keywords_from_input")
     public Result<List<Activity>> mpActivityFindAllFromInput(@RequestBody String keywords) {
         Result<List<Activity>> result = new Result<>();
         try {
             List<Activity> list;
-            if (keywords == null || keywords.equals("")) {
-                // 当关键字为空时，查询所有
+            if (keywords == null || "".equals(keywords)) {
                 list = activityService.findAllActivityByKeywordsFromInput("");
             } else {
                 list = activityService.findAllActivityByKeywordsFromInput(keywords);
@@ -245,11 +199,11 @@ public class StaffMiniProgramController {
     }
 
     @ApiOperation("小程序投票对象的批量软删除")
-    @DeleteMapping("/mp_group/delete/{ids}")
-    public Result<String> mpGroupDelete(@PathVariable("ids") String ids) {
+    @PostMapping("/mp_group/delete")
+    public Result<String> mpGroupDelete(@RequestBody List<Group> list) {
         Result<String> result =new Result<>();
         try{
-            groupService.delete(ids);
+            groupService.delete(list);
             result.setCode(HttpStatus.OK).setMessage("delete").setData("success");
         }catch (Exception e){
             result.setCode(HttpStatus.OK).setMessage("delete").setData("fail");
@@ -270,34 +224,22 @@ public class StaffMiniProgramController {
         return result;
     }
 
-    @ApiOperation("查找所有已被删除的小程序投票对象")
-    @GetMapping("/mp_group/find_all_deleted/{page}/{size}")
-    public Result<PageResult<Group>> mpGroupFindAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size){
+    @ApiOperation("分页查找所有标题或者内容包含该关键字的小程序投票对象（录入活动页面用,「keywords」为空时返回所有）")
+    @PostMapping("/mp_group/find_all_by_keywords")
+    public Result<PageResult<Group>> mpGroupFindAll(@RequestBody SearchDto searchDto) {
         Result<PageResult<Group>> result = new Result<>();
-        Page<Group> pageTemp;
+        Page<Group> page;
         try {
-            pageTemp = groupService.findAllDeleted(page, size);
+            if (searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())) {
+                page = groupService.findGroupByKeywords("", searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+            } else {
+                page = groupService.findGroupByKeywords(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+            }
             PageResult<Group> pageResult = new PageResult<>();
-            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
-            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
+            pageResult.setSize(searchDto.getSize()).setPage(searchDto.getPage()).setData(page.getContent()).setTotal(page.getTotalElements());
+            result.setMessage("success").setCode(HttpStatus.OK).setData(pageResult);
         } catch (Exception e) {
-            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
-        }
-        return result;
-    }
-
-    @ApiOperation("查找所有未被删除的小程序投票对象")
-    @GetMapping("/mp_group/find_all_exist/{page}/{size}")
-    public Result<PageResult<Group>> mpGroupFindAllExist(@PathVariable("page") int page, @PathVariable("size") int size){
-        Result<PageResult<Group>> result = new Result<>();
-        Page<Group> pageTemp;
-        try {
-            pageTemp = groupService.findAllExist(page, size);
-            PageResult<Group> pageResult = new PageResult<>();
-            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
-            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
-        } catch (Exception e) {
-            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
+            result.setMessage("fail").setCode(HttpStatus.OK).setData(null);
         }
         return result;
     }
@@ -318,11 +260,11 @@ public class StaffMiniProgramController {
     }
 
     @ApiOperation("小程序投票记录的批量软删除")
-    @DeleteMapping("/mp_record/delete/{ids}")
-    public Result<String> mpRecordDelete(@PathVariable("ids") String ids) {
+    @PostMapping("/mp_record/delete")
+    public Result<String> mpRecordDelete(@RequestBody List<Record> list) {
         Result<String> result =new Result<>();
         try{
-            recordService.delete(ids);
+            recordService.delete(list);
             result.setCode(HttpStatus.OK).setMessage("delete").setData("success");
         }catch (Exception e){
             result.setCode(HttpStatus.OK).setMessage("delete").setData("fail");
@@ -343,34 +285,22 @@ public class StaffMiniProgramController {
         return result;
     }
 
-    @ApiOperation("查找所有已被删除的小程序投票记录")
-    @GetMapping("/mp_record/find_all_deleted/{page}/{size}")
-    public Result<PageResult<Record>> mpRecordFindAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size){
+    @ApiOperation("分页查找所有标题或者内容包含该关键字的小程序投票记录（录入活动页面用,「keywords」为空时返回所有）")
+    @PostMapping("/mp_record/find_all_by_keywords")
+    public Result<PageResult<Record>> mpRecordFindAll(@RequestBody SearchDto searchDto) {
         Result<PageResult<Record>> result = new Result<>();
-        Page<Record> pageTemp;
+        Page<Record> page;
         try {
-            pageTemp = recordService.findAllDeleted(page, size);
+            if (searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())) {
+                page = recordService.findRecordByKeywords("", searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+            } else {
+                page = recordService.findRecordByKeywords(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+            }
             PageResult<Record> pageResult = new PageResult<>();
-            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
-            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
+            pageResult.setSize(searchDto.getSize()).setPage(searchDto.getPage()).setData(page.getContent()).setTotal(page.getTotalElements());
+            result.setMessage("success").setCode(HttpStatus.OK).setData(pageResult);
         } catch (Exception e) {
-            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
-        }
-        return result;
-    }
-
-    @ApiOperation("查找所有未被删除的小程序投票记录")
-    @GetMapping("/mp_record/find_all_exist/{page}/{size}")
-    public Result<PageResult<Record>> mpRecordFindAllExist(@PathVariable("page") int page, @PathVariable("size") int size){
-        Result<PageResult<Record>> result = new Result<>();
-        Page<Record> pageTemp;
-        try {
-            pageTemp = recordService.findAllExist(page, size);
-            PageResult<Record> pageResult = new PageResult<>();
-            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
-            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
-        } catch (Exception e) {
-            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
+            result.setMessage("fail").setCode(HttpStatus.OK).setData(null);
         }
         return result;
     }
@@ -390,12 +320,12 @@ public class StaffMiniProgramController {
         return result;
     }
 
-    @ApiOperation("小程序赞助商的批量软删除")
-    @DeleteMapping("/mp_merchant/delete/{ids}")
-    public Result<String> mpMerchantDelete(@PathVariable("ids") String ids) {
+    @ApiOperation("小程序赞助商的批量删除")
+    @PostMapping("/mp_merchant/delete")
+    public Result<String> mpMerchantDelete(@RequestBody List<Merchant> list) {
         Result<String> result =new Result<>();
         try{
-            merchantService.delete(ids);
+            merchantService.delete(list);
             result.setCode(HttpStatus.OK).setMessage("delete").setData("success");
         }catch (Exception e){
             result.setCode(HttpStatus.OK).setMessage("delete").setData("fail");
@@ -416,34 +346,22 @@ public class StaffMiniProgramController {
         return result;
     }
 
-    @ApiOperation("查找所有已被删除的小程序赞助商")
-    @GetMapping("/mp_merchant/find_all_deleted/{page}/{size}")
-    public Result<PageResult<Merchant>> mpMerchantFindAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size){
+    @ApiOperation("分页查找所有标题或者内容包含该关键字的小程序赞助商（录入活动页面用,「keywords」为空时返回所有）")
+    @PostMapping("/mp_merchant/find_all_by_keywords")
+    public Result<PageResult<Merchant>> mpMerchantFindAll(@RequestBody SearchDto searchDto) {
         Result<PageResult<Merchant>> result = new Result<>();
-        Page<Merchant> pageTemp;
+        Page<Merchant> page;
         try {
-            pageTemp = merchantService.findAllDeleted(page, size);
+            if (searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())) {
+                page = merchantService.findMerchantByKeywords("", searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+            } else {
+                page = merchantService.findMerchantByKeywords(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+            }
             PageResult<Merchant> pageResult = new PageResult<>();
-            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
-            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
+            pageResult.setSize(searchDto.getSize()).setPage(searchDto.getPage()).setData(page.getContent()).setTotal(page.getTotalElements());
+            result.setMessage("success").setCode(HttpStatus.OK).setData(pageResult);
         } catch (Exception e) {
-            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
-        }
-        return result;
-    }
-
-    @ApiOperation("查找所有未被删除的小程序赞助商")
-    @GetMapping("/mp_merchant/find_all_exist/{page}/{size}")
-    public Result<PageResult<Merchant>> mpMerchantFindAllExist(@PathVariable("page") int page, @PathVariable("size") int size){
-        Result<PageResult<Merchant>> result = new Result<>();
-        Page<Merchant> pageTemp;
-        try {
-            pageTemp = merchantService.findAllExist(page, size);
-            PageResult<Merchant> pageResult = new PageResult<>();
-            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
-            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
-        } catch (Exception e) {
-            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
+            result.setMessage("fail").setCode(HttpStatus.OK).setData(null);
         }
         return result;
     }
@@ -464,11 +382,11 @@ public class StaffMiniProgramController {
     }
 
     @ApiOperation("小程序公告栏的批量软删除")
-    @DeleteMapping("/mp_note/delete/{ids}")
-    public Result<String> mpNoteDelete(@PathVariable("ids") String ids) {
+    @PostMapping("/mp_note/delete")
+    public Result<String> mpNoteDelete(@RequestBody List<Note> list) {
         Result<String> result =new Result<>();
         try{
-            noteService.delete(ids);
+            noteService.delete(list);
             result.setCode(HttpStatus.OK).setMessage("delete").setData("success");
         }catch (Exception e){
             result.setCode(HttpStatus.OK).setMessage("delete").setData("fail");
@@ -489,34 +407,22 @@ public class StaffMiniProgramController {
         return result;
     }
 
-    @ApiOperation("查找所有已被删除的小程序公告栏")
-    @GetMapping("/mp_note/find_all_deleted/{page}/{size}")
-    public Result<PageResult<Note>> mpNoteFindAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size){
+    @ApiOperation("分页查找所有标题或者内容包含该关键字的小程序公告栏（录入活动页面用,「keywords」为空时返回所有）")
+    @PostMapping("/mp_note/find_all_by_keywords")
+    public Result<PageResult<Note>> mpNoteFindAll(@RequestBody SearchDto searchDto) {
         Result<PageResult<Note>> result = new Result<>();
-        Page<Note> pageTemp;
+        Page<Note> page;
         try {
-            pageTemp = noteService.findAllDeleted(page, size);
+            if (searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())) {
+                page = noteService.findNoteByKeywords("", searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+            } else {
+                page = noteService.findNoteByKeywords(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+            }
             PageResult<Note> pageResult = new PageResult<>();
-            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
-            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
+            pageResult.setSize(searchDto.getSize()).setPage(searchDto.getPage()).setData(page.getContent()).setTotal(page.getTotalElements());
+            result.setMessage("success").setCode(HttpStatus.OK).setData(pageResult);
         } catch (Exception e) {
-            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
-        }
-        return result;
-    }
-
-    @ApiOperation("查找所有未被删除的小程序公告栏")
-    @GetMapping("/mp_note/find_all_exist/{page}/{size}")
-    public Result<PageResult<Note>> mpNoteFindAllExist(@PathVariable("page") int page, @PathVariable("size") int size){
-        Result<PageResult<Note>> result = new Result<>();
-        Page<Note> pageTemp;
-        try {
-            pageTemp = noteService.findAllExist(page, size);
-            PageResult<Note> pageResult = new PageResult<>();
-            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
-            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
-        } catch (Exception e) {
-            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
+            result.setMessage("fail").setCode(HttpStatus.OK).setData(null);
         }
         return result;
     }

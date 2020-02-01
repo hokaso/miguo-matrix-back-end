@@ -1,7 +1,6 @@
 package com.miguo.matrix.repository.client;
 
 import com.miguo.matrix.entity.client.Article;
-import com.miguo.matrix.entity.staff.Account;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
