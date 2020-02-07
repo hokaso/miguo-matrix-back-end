@@ -38,7 +38,6 @@ public class Note extends BaseEntity {
 
     @Column(name = "note_display_time")
     @ApiModelProperty("公告展示时间")
-    //    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date noteDisplayTime;
 
     @Column(name = "note_details")

@@ -1,6 +1,7 @@
 package com.miguo.matrix.repository.miniprogram;
 
 import com.miguo.matrix.entity.miniprogram.Merchant;
+import com.miguo.matrix.vo.miniprogram.MerchantVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,8 +20,21 @@ public interface MpMerchantRepository extends JpaRepository<Merchant,String> {
      * @param pageable
      * @return
      */
-    @Query(value = "select * from vote_merchants WHERE merchant_name LIKE %:#{#keywords}% OR merchant_info LIKE %:#{#keywords}%",nativeQuery = true)
-    Page<Merchant> findMerchantByKeywords(String keywords, Pageable pageable);
+    @Query("SELECT new com.miguo.matrix.vo.miniprogram.MerchantVo(" +
+            "g.id," +
+            "g.createBy," +
+            "g.updateBy," +
+            "g.createAt," +
+            "g.updateAt," +
+            "g.isDel," +
+            "g.activityId," +
+            "g.merchantName," +
+            "g.merchantInfo," +
+            "g.merchantLogo," +
+            "a.activityName) " +
+            "FROM Merchant g " +
+            "LEFT JOIN Activity a ON g.activityId=a.id WHERE g.merchantName LIKE %:#{#keywords}% OR g.merchantInfo LIKE %:#{#keywords}%")
+    Page<MerchantVo> findMerchantByKeywords(String keywords, Pageable pageable);
 
     /**
      * 通过id找投票对象

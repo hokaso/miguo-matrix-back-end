@@ -1,6 +1,7 @@
 package com.miguo.matrix.repository.miniprogram;
 
 import com.miguo.matrix.entity.miniprogram.Note;
+import com.miguo.matrix.vo.miniprogram.NoteVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,8 +20,21 @@ public interface MpNoteRepository extends JpaRepository<Note,String> {
      * @param pageable
      * @return
      */
-    @Query(value = "select * from vote_notes WHERE note_name LIKE %:#{#keywords}% OR note_details LIKE %:#{#keywords}%",nativeQuery = true)
-    Page<Note> findNoteByKeywords(String keywords, Pageable pageable);
+    @Query("SELECT new com.miguo.matrix.vo.miniprogram.NoteVo(" +
+            "g.id," +
+            "g.createBy," +
+            "g.updateBy," +
+            "g.createAt," +
+            "g.updateAt," +
+            "g.isDel," +
+            "g.activityId," +
+            "g.noteName," +
+            "g.noteDisplayTime," +
+            "g.noteDetails," +
+            "a.activityName) " +
+            "FROM Note g " +
+            "LEFT JOIN Activity a ON g.activityId=a.id WHERE g.noteName LIKE %:#{#keywords}% OR g.noteDetails LIKE %:#{#keywords}%")
+    Page<NoteVo> findNoteByKeywords(String keywords, Pageable pageable);
 
     /**
      * 通过id找公告对象

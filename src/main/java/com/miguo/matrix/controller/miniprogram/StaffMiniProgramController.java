@@ -6,6 +6,8 @@ import com.miguo.matrix.dto.SearchDto;
 import com.miguo.matrix.entity.miniprogram.*;
 import com.miguo.matrix.service.miniprogram.*;
 import com.miguo.matrix.vo.miniprogram.GroupVo;
+import com.miguo.matrix.vo.miniprogram.MerchantVo;
+import com.miguo.matrix.vo.miniprogram.NoteVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -360,19 +362,20 @@ public class StaffMiniProgramController {
 
     @ApiOperation("分页查找所有标题或者内容包含该关键字的小程序赞助商（录入活动页面用,「keywords」为空时返回所有）")
     @PostMapping("/mp_merchant/find_all_by_keywords")
-    public Result<PageResult<Merchant>> mpMerchantFindAll(@RequestBody SearchDto searchDto) {
-        Result<PageResult<Merchant>> result = new Result<>();
-        Page<Merchant> page;
+    public Result<PageResult<MerchantVo>> mpMerchantFindAll(@RequestBody SearchDto searchDto) {
+        Result<PageResult<MerchantVo>> result = new Result<>();
+        Page<MerchantVo> page;
         try {
             if (searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())) {
                 page = merchantService.findMerchantByKeywords("", searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
             } else {
                 page = merchantService.findMerchantByKeywords(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
             }
-            PageResult<Merchant> pageResult = new PageResult<>();
+            PageResult<MerchantVo> pageResult = new PageResult<>();
             pageResult.setSize(searchDto.getSize()).setPage(searchDto.getPage()).setData(page.getContent()).setTotal(page.getTotalElements());
             result.setMessage("success").setCode(HttpStatus.OK).setData(pageResult);
         } catch (Exception e) {
+            System.out.print(e);
             result.setMessage("fail").setCode(HttpStatus.OK).setData(null);
         }
         return result;
@@ -421,16 +424,16 @@ public class StaffMiniProgramController {
 
     @ApiOperation("分页查找所有标题或者内容包含该关键字的小程序公告栏（录入活动页面用,「keywords」为空时返回所有）")
     @PostMapping("/mp_note/find_all_by_keywords")
-    public Result<PageResult<Note>> mpNoteFindAll(@RequestBody SearchDto searchDto) {
-        Result<PageResult<Note>> result = new Result<>();
-        Page<Note> page;
+    public Result<PageResult<NoteVo>> mpNoteFindAll(@RequestBody SearchDto searchDto) {
+        Result<PageResult<NoteVo>> result = new Result<>();
+        Page<NoteVo> page;
         try {
             if (searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())) {
                 page = noteService.findNoteByKeywords("", searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
             } else {
                 page = noteService.findNoteByKeywords(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
             }
-            PageResult<Note> pageResult = new PageResult<>();
+            PageResult<NoteVo> pageResult = new PageResult<>();
             pageResult.setSize(searchDto.getSize()).setPage(searchDto.getPage()).setData(page.getContent()).setTotal(page.getTotalElements());
             result.setMessage("success").setCode(HttpStatus.OK).setData(pageResult);
         } catch (Exception e) {
