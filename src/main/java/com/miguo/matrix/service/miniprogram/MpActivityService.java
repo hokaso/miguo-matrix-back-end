@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 功能描述：
@@ -77,7 +78,17 @@ public class MpActivityService {
     }
 
     /**
-     * 通过id查找活动
+     * 通过id查找活动（用于查找）
+     * @param id
+     * @return
+     */
+    public Optional<Activity> findById(String id)
+    {
+        return activityRepository.findById(id);
+    }
+
+    /**
+     * 通过id查找活动（用于更新）
      * @param id
      * @return
      */

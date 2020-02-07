@@ -3,6 +3,7 @@ package com.miguo.matrix.service.miniprogram;
 import com.miguo.matrix.entity.miniprogram.Group;
 import com.miguo.matrix.repository.miniprogram.MpGroupRepository;
 import com.miguo.matrix.utils.SnowflakeIdWorker;
+import com.miguo.matrix.vo.miniprogram.GroupVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,16 +36,18 @@ public class MpGroupService {
 
     /**
      * 添加投票对象
-     * @param group
+     * @param groupVo
      */
-    public void add(Group group){
-        group.setCreateAt(new Date());
-        group.setUpdateAt(new Date());
-        group.setId(snowflakeIdWorker.nextId());
-        group.setIsDel(false);
-        group.setCreateBy((String) session.getAttribute("user"));
-        group.setUpdateBy((String) session.getAttribute("user"));
-        groupRepository.save(group);
+    public void add(GroupVo groupVo){
+        Group groupTemp = new Group();
+        BeanUtils.copyProperties(groupVo, groupTemp);
+        groupTemp.setCreateAt(new Date());
+        groupTemp.setUpdateAt(new Date());
+        groupTemp.setId(snowflakeIdWorker.nextId());
+        groupTemp.setIsDel(false);
+        groupTemp.setCreateBy((String) session.getAttribute("user"));
+        groupTemp.setUpdateBy((String) session.getAttribute("user"));
+        groupRepository.save(groupTemp);
     }
 
     /**
@@ -55,9 +58,9 @@ public class MpGroupService {
         groupRepository.deleteInBatch(list);
     }
 
-    public Page<Group> findGroupByKeywords(String keywords, int page, int size, Sort.Direction direction){
+    public Page<GroupVo> findGroupByKeywords(String keywords, int page, int size, Sort.Direction direction){
         page--;
-        Pageable pageable = PageRequest.of(page, size, direction, "update_at");
+        Pageable pageable = PageRequest.of(page, size, direction, "updateAt");
         return groupRepository.findGroupByKeywords(keywords,pageable);
     }
 

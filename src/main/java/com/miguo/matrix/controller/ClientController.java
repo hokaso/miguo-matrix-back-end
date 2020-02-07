@@ -44,7 +44,7 @@ public class ClientController {
         Result<PageResult<Article>> result = new Result<>();
         Page<Article> page;
         try {
-            if (searchDto.getKeywords() == null || searchDto.getKeywords().equals("")) {
+            if (searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())) {
                 page = articleService.findAllByKeywords("", searchDto.getPage(), searchDto.getSize());
                 // 当关键字为空时，查询所有
             } else {

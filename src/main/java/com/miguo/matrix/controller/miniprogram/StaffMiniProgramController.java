@@ -5,6 +5,7 @@ import com.miguo.matrix.dto.Result;
 import com.miguo.matrix.dto.SearchDto;
 import com.miguo.matrix.entity.miniprogram.*;
 import com.miguo.matrix.service.miniprogram.*;
+import com.miguo.matrix.vo.miniprogram.GroupVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Hocassian
@@ -166,8 +168,8 @@ public class StaffMiniProgramController {
     }
 
     @ApiOperation("不分页查找所有标题或者内容包含该关键字的活动")
-    @PostMapping("/mp_activity/find_all_by_keywords_from_input")
-    public Result<List<Activity>> mpActivityFindAllFromInput(@RequestBody String keywords) {
+    @GetMapping("/mp_activity/find_all_by_keywords_from_input/{keyword}")
+    public Result<List<Activity>> mpActivityFindAllFromInput(@PathVariable("keyword") String keywords) {
         Result<List<Activity>> result = new Result<>();
         try {
             List<Activity> list;
@@ -183,14 +185,23 @@ public class StaffMiniProgramController {
         return result;
     }
 
+    @ApiOperation("用于返回该表联结的值")
+    @GetMapping("/mp_activity/find_activity_id/{id}")
+    public Result<Optional<Activity>> findById(@PathVariable("id") String id){
+        Optional<Activity> list= activityService.findById(id);
+        Result<Optional<Activity>> result =new Result<>();
+        result.setCode(HttpStatus.OK).setData(list).setMessage("success");
+        return result;
+    }
+
     // ----------以下为小程序投票对象的增删查改-------
 
     @ApiOperation("小程序投票对象的添加")
     @PostMapping("/mp_group/add")
-    public Result<String> mpGroupAdd(@RequestBody Group group){
+    public Result<String> mpGroupAdd(@RequestBody GroupVo groupVo){
         Result<String> result = new Result<>();
         try{
-            groupService.add(group);
+            groupService.add(groupVo);
             result.setCode(HttpStatus.OK).setMessage("add").setData("success");
         }catch (Exception e){
             result.setCode(HttpStatus.OK).setMessage("add").setData("fail");
@@ -226,19 +237,20 @@ public class StaffMiniProgramController {
 
     @ApiOperation("分页查找所有标题或者内容包含该关键字的小程序投票对象（录入活动页面用,「keywords」为空时返回所有）")
     @PostMapping("/mp_group/find_all_by_keywords")
-    public Result<PageResult<Group>> mpGroupFindAll(@RequestBody SearchDto searchDto) {
-        Result<PageResult<Group>> result = new Result<>();
-        Page<Group> page;
+    public Result<PageResult<GroupVo>> mpGroupFindAll(@RequestBody SearchDto searchDto) {
+        Result<PageResult<GroupVo>> result = new Result<>();
+        Page<GroupVo> page;
         try {
             if (searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())) {
                 page = groupService.findGroupByKeywords("", searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
             } else {
                 page = groupService.findGroupByKeywords(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
             }
-            PageResult<Group> pageResult = new PageResult<>();
+            PageResult<GroupVo> pageResult = new PageResult<>();
             pageResult.setSize(searchDto.getSize()).setPage(searchDto.getPage()).setData(page.getContent()).setTotal(page.getTotalElements());
             result.setMessage("success").setCode(HttpStatus.OK).setData(pageResult);
         } catch (Exception e) {
+            System.out.print(e);
             result.setMessage("fail").setCode(HttpStatus.OK).setData(null);
         }
         return result;
