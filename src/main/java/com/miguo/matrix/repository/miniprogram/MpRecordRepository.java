@@ -1,6 +1,7 @@
 package com.miguo.matrix.repository.miniprogram;
 
 import com.miguo.matrix.entity.miniprogram.Record;
+import com.miguo.matrix.vo.miniprogram.RecordVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,8 +20,23 @@ public interface MpRecordRepository extends JpaRepository<Record,String> {
      * @param pageable
      * @return
      */
-    @Query(value = "select * from vote_records WHERE record_nickname LIKE %:#{#keywords}%",nativeQuery = true)
-    Page<Record> findRecordByKeywords(String keywords, Pageable pageable);
+    @Query("SELECT new com.miguo.matrix.vo.miniprogram.RecordVo(" +
+            "r.id," +
+            "r.createBy," +
+            "r.updateBy," +
+            "r.createAt," +
+            "r.updateAt," +
+            "r.isDel," +
+            "r.activityId," +
+            "r.groupId," +
+            "r.recordNickname," +
+            "r.recordOpenid," +
+            "r.recordDate," +
+            "g.groupName) " +
+            "FROM Record r " +
+            "LEFT JOIN Group g ON r.groupId=g.id " +
+            "WHERE r.recordNickname LIKE %:#{#keywords}%")
+    Page<RecordVo> findRecordByKeywords(String keywords, Pageable pageable);
 
     /**
      * 通过id找投票记录

@@ -5,9 +5,7 @@ import com.miguo.matrix.dto.Result;
 import com.miguo.matrix.dto.SearchDto;
 import com.miguo.matrix.entity.miniprogram.*;
 import com.miguo.matrix.service.miniprogram.*;
-import com.miguo.matrix.vo.miniprogram.GroupVo;
-import com.miguo.matrix.vo.miniprogram.MerchantVo;
-import com.miguo.matrix.vo.miniprogram.NoteVo;
+import com.miguo.matrix.vo.miniprogram.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -90,16 +88,16 @@ public class StaffMiniProgramController {
 
     @ApiOperation("分页查找所有标题或者内容包含该关键字的小程序轮播图（录入活动页面用,「keywords」为空时返回所有）")
     @PostMapping("/mp_swiper/find_all_by_keywords")
-    public Result<PageResult<Swiper>> mpSwiperFindAll(@RequestBody SearchDto searchDto) {
-        Result<PageResult<Swiper>> result = new Result<>();
-        Page<Swiper> page;
+    public Result<PageResult<SwiperVo>> mpSwiperFindAll(@RequestBody SearchDto searchDto) {
+        Result<PageResult<SwiperVo>> result = new Result<>();
+        Page<SwiperVo> page;
         try {
             if (searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())) {
                 page = swiperService.findSwiperByKeywords("", searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
             } else {
                 page = swiperService.findSwiperByKeywords(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
             }
-            PageResult<Swiper> pageResult = new PageResult<>();
+            PageResult<SwiperVo> pageResult = new PageResult<>();
             pageResult.setSize(searchDto.getSize()).setPage(searchDto.getPage()).setData(page.getContent()).setTotal(page.getTotalElements());
             result.setMessage("success").setCode(HttpStatus.OK).setData(pageResult);
         } catch (Exception e) {
@@ -189,7 +187,7 @@ public class StaffMiniProgramController {
 
     @ApiOperation("用于返回该表联结的值")
     @GetMapping("/mp_activity/find_activity_id/{id}")
-    public Result<Optional<Activity>> findById(@PathVariable("id") String id){
+    public Result<Optional<Activity>> findActivityById(@PathVariable("id") String id){
         Optional<Activity> list= activityService.findById(id);
         Result<Optional<Activity>> result =new Result<>();
         result.setCode(HttpStatus.OK).setData(list).setMessage("success");
@@ -258,6 +256,33 @@ public class StaffMiniProgramController {
         return result;
     }
 
+    @ApiOperation("不分页查找所有标题或者内容包含该关键字的小程序投票对象")
+    @GetMapping("/mp_group/find_all_by_keywords_from_input/{keyword}")
+    public Result<List<Group>> mpGroupFindAllFromInput(@PathVariable("keyword") String keywords) {
+        Result<List<Group>> result = new Result<>();
+        try {
+            List<Group> list;
+            if (keywords == null || "".equals(keywords)) {
+                list = groupService.findAllActivityByKeywordsFromInput("");
+            } else {
+                list = groupService.findAllActivityByKeywordsFromInput(keywords);
+            }
+            result.setMessage("success").setCode(HttpStatus.OK).setData(list);
+        } catch (Exception e) {
+            result.setMessage("fail").setCode(HttpStatus.OK).setData(null);
+        }
+        return result;
+    }
+
+    @ApiOperation("用于返回该表联结的值")
+    @GetMapping("/mp_group/find_group_id/{id}")
+    public Result<Optional<Group>> findGroupById(@PathVariable("id") String id){
+        Optional<Group> list= groupService.findById(id);
+        Result<Optional<Group>> result =new Result<>();
+        result.setCode(HttpStatus.OK).setData(list).setMessage("success");
+        return result;
+    }
+
     // ----------以下为小程序投票记录的增删查改-------
 
     @ApiOperation("小程序投票记录的添加")
@@ -301,16 +326,16 @@ public class StaffMiniProgramController {
 
     @ApiOperation("分页查找所有标题或者内容包含该关键字的小程序投票记录（录入活动页面用,「keywords」为空时返回所有）")
     @PostMapping("/mp_record/find_all_by_keywords")
-    public Result<PageResult<Record>> mpRecordFindAll(@RequestBody SearchDto searchDto) {
-        Result<PageResult<Record>> result = new Result<>();
-        Page<Record> page;
+    public Result<PageResult<RecordVo>> mpRecordFindAll(@RequestBody SearchDto searchDto) {
+        Result<PageResult<RecordVo>> result = new Result<>();
+        Page<RecordVo> page;
         try {
             if (searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())) {
                 page = recordService.findRecordByKeywords("", searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
             } else {
                 page = recordService.findRecordByKeywords(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
             }
-            PageResult<Record> pageResult = new PageResult<>();
+            PageResult<RecordVo> pageResult = new PageResult<>();
             pageResult.setSize(searchDto.getSize()).setPage(searchDto.getPage()).setData(page.getContent()).setTotal(page.getTotalElements());
             result.setMessage("success").setCode(HttpStatus.OK).setData(pageResult);
         } catch (Exception e) {
@@ -441,4 +466,5 @@ public class StaffMiniProgramController {
         }
         return result;
     }
+
 }

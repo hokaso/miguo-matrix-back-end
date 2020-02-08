@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 功能描述：
@@ -62,6 +63,15 @@ public class MpGroupService {
         page--;
         Pageable pageable = PageRequest.of(page, size, direction, "updateAt");
         return groupRepository.findGroupByKeywords(keywords,pageable);
+    }
+
+    public List<Group> findAllActivityByKeywordsFromInput (String keywords) {
+        return groupRepository.findGroupByKeywordsFromInput(keywords);
+    }
+
+    public Optional<Group> findById(String id)
+    {
+        return groupRepository.findById(id);
     }
 
     public Group findOneById(String id)

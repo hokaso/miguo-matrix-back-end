@@ -32,6 +32,10 @@ public class Record extends BaseEntity {
     @ApiModelProperty("活动id")
     private String activityId;
 
+    @Column(name = "group_id")
+    @ApiModelProperty("投票对象id")
+    private String groupId;
+
     @Column(name = "record_nickname")
     @ApiModelProperty("用户昵称")
     private String recordNickname;
@@ -39,10 +43,6 @@ public class Record extends BaseEntity {
     @Column(name = "record_openid")
     @ApiModelProperty("用户openid")
     private String recordOpenid;
-
-    @Column(name = "record_vote")
-    @ApiModelProperty("投票对象")
-    private String recordVote;
 
     @Column(name = "record_date")
     @ApiModelProperty("投票时间")

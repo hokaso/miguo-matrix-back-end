@@ -1,6 +1,7 @@
 package com.miguo.matrix.repository.miniprogram;
 
 import com.miguo.matrix.entity.miniprogram.Swiper;
+import com.miguo.matrix.vo.miniprogram.SwiperVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,8 +20,20 @@ public interface MpSwiperRepository extends JpaRepository<Swiper,String> {
      * @param pageable
      * @return
      */
-    @Query(value = "select * from swiper_name WHERE swiper_name LIKE %:#{#keywords}%",nativeQuery = true)
-    Page<Swiper> findSwiperByKeywords(String keywords, Pageable pageable);
+    @Query("SELECT new com.miguo.matrix.vo.miniprogram.SwiperVo(" +
+            "g.id," +
+            "g.createBy," +
+            "g.updateBy," +
+            "g.createAt," +
+            "g.updateAt," +
+            "g.isDel," +
+            "g.activityId," +
+            "g.swiperName," +
+            "g.swiperPic," +
+            "a.activityName) " +
+            "FROM Swiper g " +
+            "LEFT JOIN Activity a ON g.activityId=a.id WHERE g.swiperName LIKE %:#{#keywords}%")
+    Page<SwiperVo> findSwiperByKeywords(String keywords, Pageable pageable);
 
     /**
      * 通过id找轮播图

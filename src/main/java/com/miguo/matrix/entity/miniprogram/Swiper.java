@@ -27,6 +27,10 @@ import javax.persistence.Table;
 @Table(name = "vote_swipers")
 public class Swiper extends BaseEntity {
 
+    @Column(name = "activity_id")
+    @ApiModelProperty("活动id")
+    private String activityId;
+
     @Column(name = "swiper_name")
     @ApiModelProperty("轮播图名称")
     private String swiperName;

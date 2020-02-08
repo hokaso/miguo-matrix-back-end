@@ -3,6 +3,7 @@ package com.miguo.matrix.service.miniprogram;
 import com.miguo.matrix.entity.miniprogram.Swiper;
 import com.miguo.matrix.repository.miniprogram.MpSwiperRepository;
 import com.miguo.matrix.utils.SnowflakeIdWorker;
+import com.miguo.matrix.vo.miniprogram.SwiperVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -47,9 +48,9 @@ public class MpSwiperService {
         swiperRepository.deleteInBatch(list);
     }
 
-    public Page<Swiper> findSwiperByKeywords(String keywords, int page, int size, Sort.Direction direction){
+    public Page<SwiperVo> findSwiperByKeywords(String keywords, int page, int size, Sort.Direction direction){
         page--;
-        Pageable pageable = PageRequest.of(page, size, direction, "update_at");
+        Pageable pageable = PageRequest.of(page, size, direction, "updateAt");
         return swiperRepository.findSwiperByKeywords(keywords,pageable);
     }
 

@@ -3,6 +3,7 @@ package com.miguo.matrix.service.miniprogram;
 import com.miguo.matrix.entity.miniprogram.Record;
 import com.miguo.matrix.repository.miniprogram.MpRecordRepository;
 import com.miguo.matrix.utils.SnowflakeIdWorker;
+import com.miguo.matrix.vo.miniprogram.RecordVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -47,9 +48,9 @@ public class MpRecordService {
         recordRepository.deleteInBatch(list);
     }
 
-    public Page<Record> findRecordByKeywords(String keywords, int page, int size, Sort.Direction direction){
+    public Page<RecordVo> findRecordByKeywords(String keywords, int page, int size, Sort.Direction direction){
         page--;
-        Pageable pageable = PageRequest.of(page, size, direction, "update_at");
+        Pageable pageable = PageRequest.of(page, size, direction, "updateAt");
         return recordRepository.findRecordByKeywords(keywords,pageable);
     }
 
