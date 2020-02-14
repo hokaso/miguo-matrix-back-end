@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * 功能描述：
@@ -88,8 +90,7 @@ public class SwiperService {
     public Page<Swiper> findAllDeleted(int page,int size){
         page--;
         Pageable pageable=PageRequest.of(page,size);
-        Page<Swiper> page1 = swiperRepository.findAllDeletedSwiper(pageable);
-        return page1;
+        return swiperRepository.findAllDeletedSwiper(pageable);
     }
 
     /**
@@ -101,8 +102,16 @@ public class SwiperService {
     public Page<Swiper> findAllExist(int page,int size){
         page--;
         Pageable pageable=PageRequest.of(page,size);
-        Page<Swiper> page1 = swiperRepository.findAllExistSwiper(pageable);
-        return page1;
+        return swiperRepository.findAllExistSwiper(pageable);
+    }
+
+    /**
+     * 分页返回所有未被下架的轮播图条目
+     * @param
+     * @return
+     */
+    public List<Swiper> clientFindAllExist(){
+        return swiperRepository.clientFindAllExistSwiper();
     }
 
     /**
@@ -110,9 +119,9 @@ public class SwiperService {
      * @param id
      * @return
      */
-    public Swiper findOneById(String id)
+    public Optional<Swiper> findOneById(String id)
     {
-        return swiperRepository.findSwiperById(id);
+        return swiperRepository.findById(id);
     }
 
     /**
@@ -120,7 +129,7 @@ public class SwiperService {
      * @param swiper
      */
     public void update(Swiper swiper){
-        Swiper swiperTemp=this.findOneById(swiper.getId());
+        Swiper swiperTemp=this.findOneById(swiper.getId()).get();
         BeanUtils.copyProperties(swiper, swiperTemp);
         swiperTemp.setUpdateBy((String) session.getAttribute("user"));
         swiperTemp.setUpdateAt(new Date());

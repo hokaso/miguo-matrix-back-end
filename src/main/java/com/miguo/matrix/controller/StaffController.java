@@ -367,12 +367,13 @@ public class StaffController {
 
     @ApiOperation("网站轮播图的更新")
     @PutMapping("/web_swiper/update")
-    public Result<String> webSwiperUpdate(@RequestBody Video video){
+    public Result<String> webSwiperUpdate(@RequestBody Swiper swiper){
         Result<String> result = new Result<>();
         try{
-            videoService.update(video);
+            swiperService.update(swiper);
             result.setCode(HttpStatus.OK).setMessage("update").setData("success");
         }catch (Exception e){
+            System.out.print(e);
             result.setCode(HttpStatus.OK).setMessage("update").setData("fail");
         }
         return result;
@@ -437,7 +438,7 @@ public class StaffController {
     public Result<Swiper> findSwiperById(@PathVariable("id") String id){
         Result<Swiper> result = new Result<>();
         try {
-            Swiper list = swiperService.findOneById(id);
+            Swiper list = swiperService.findOneById(id).get();
             result.setMessage("success").setCode(HttpStatus.OK).setData(list);
 
         } catch (Exception e) {

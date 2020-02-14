@@ -4,8 +4,10 @@ import com.miguo.matrix.dto.SearchDto;
 import com.miguo.matrix.dto.PageResult;
 import com.miguo.matrix.dto.Result;
 import com.miguo.matrix.entity.client.Article;
+import com.miguo.matrix.entity.client.Swiper;
 import com.miguo.matrix.entity.client.Video;
 import com.miguo.matrix.service.client.ArticleService;
+import com.miguo.matrix.service.client.SwiperService;
 import com.miguo.matrix.service.client.VideoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author Hocassian
@@ -37,6 +41,9 @@ public class ClientController {
 
     @Autowired
     private VideoService videoService;
+
+    @Autowired
+    private SwiperService swiperService;
 
     @ApiOperation("分页查找所有模糊查询且未被软删除的文章")
     @PostMapping("/article/find_all_by_keywords")
@@ -106,6 +113,34 @@ public class ClientController {
             result.setData(video).setMessage("success").setCode(HttpStatus.OK);
         } catch (Exception e) {
             result.setData(null).setMessage("fail").setCode(HttpStatus.OK);
+        }
+        return result;
+    }
+
+    @ApiOperation("找某一个轮播图")
+    @GetMapping("/swiper/find_one_by_id/{id}")
+    public Result<Swiper> swiperFindOneById(@PathVariable("id") String id) {
+        Result<Swiper> result = new Result<>();
+        result.setMessage("find_one_by_id").setCode(HttpStatus.OK);
+        try {
+            Swiper swiper = swiperService.findOneById(id).get();
+            result.setData(swiper).setMessage("success").setCode(HttpStatus.OK);
+        } catch (Exception e) {
+            result.setData(null).setMessage("fail").setCode(HttpStatus.OK);
+        }
+        return result;
+    }
+
+    @ApiOperation("查找所有未被软删除的轮播图")
+    @PostMapping("/swiper/find_all_exist")
+    public Result<List<Swiper>> swiperFindAllByKeywords(String a) {
+        Result<List<Swiper>> result = new Result<>();
+        List<Swiper> list;
+        try {
+            list = swiperService.clientFindAllExist();
+            result.setMessage("success").setCode(HttpStatus.OK).setData(list);
+        } catch (Exception e) {
+            result.setMessage("fail").setCode(HttpStatus.OK).setData(null);
         }
         return result;
     }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Hocassian
@@ -37,14 +38,34 @@ public interface SwiperRepository extends JpaRepository<Swiper,String> {
     @Query(value = "select * from client_swiper WHERE swiper_name LIKE %:#{#keywords}%",nativeQuery = true)
     Page<Swiper> staffFindSwiperByKeywords(String keywords,Pageable pageable);
 
-    // 查找所有已被软删除的轮播图
+    /**
+     * 查找所有已被软删除的轮播图
+     * @param pageable
+     * @return
+     */
     @Query(value = "select * from client_swiper where is_del = true",nativeQuery = true)
     Page<Swiper> findAllDeletedSwiper(Pageable pageable);
 
-    // 查找所有未被软删除的轮播图
+    /**
+     * 查找所有未被软删除的轮播图
+     * @param pageable
+     * @return
+     */
     @Query(value = "select * from client_swiper where is_del = false",nativeQuery = true)
     Page<Swiper> findAllExistSwiper(Pageable pageable);
 
-    // 通过id找轮播图
-    Swiper findSwiperById(String id);
+    /**
+     * 查找所有未被软删除的轮播图（客户使用）
+     * @param
+     * @return
+     */
+    @Query(value = "select * from client_swiper where is_del = false",nativeQuery = true)
+    List<Swiper> clientFindAllExistSwiper();
+
+    /**
+     * 通过id找轮播图
+     * @param id
+     * @return
+     */
+    Swiper findWebSwiperById(String id);
 }

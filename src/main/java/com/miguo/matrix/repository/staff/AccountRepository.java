@@ -18,10 +18,19 @@ import java.util.List;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, String> {
 
-    // 通过nickname(账号)查找某一个用户，忽略是否被软删除过
+    /**
+     * 通过nickname(账号)查找某一个用户，忽略是否被软删除过
+     * @param nickname
+     * @return
+     */
     Account findByNickname(String nickname);
 
-    // 软删除某一个用户
+    /**
+     * 软删除某一个用户
+     * @param nickname
+     * @param date
+     * @param updateBy
+     */
     @Modifying
     @Transactional
     @Query(value = "update com_staff set is_del = true , update_at = :#{#date} , update_by = :#{#updateBy} where  nickname = :#{#nickname} ", nativeQuery = true)
