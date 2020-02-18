@@ -49,39 +49,28 @@ public class StaffController {
 
     //    -----------以下为员工信息的增删改查----------
 
-    @ApiOperation(value = "修改员工名称")
-    @PutMapping("/account/update_name")
-    public Result<String> updateName(@RequestBody String name) {
-        Result<String> result = new Result<>();
-        result.setMessage("update_name").setCode(HttpStatus.OK);
+
+    @ApiOperation("获取当前员工信息")
+    @PostMapping("/account/find_one")
+    public Result<Account> findOneStaff(@RequestBody String a){
+        Result<Account> result = new Result<>();
         try {
             Account account = accountService.findOne((String) session.getAttribute("user"));
-            account.setName(name);
-            accountService.updateName(account);
-            result.setData("success");
+            result.setMessage("success").setCode(HttpStatus.OK).setData(account);
         } catch (Exception e) {
-            result.setData("fail");
+            result.setMessage("fail").setCode(HttpStatus.OK).setData(null);
         }
-
         return result;
     }
 
-    @ApiOperation(value = "修改员工密码")
-    @PutMapping("/account/update_password")
-    public Result<String> updatePassword(@RequestBody UpdatePasswordDto updatePasswordDto) {
+    @ApiOperation(value = "修改员工信息")
+    @PostMapping("/account/update")
+    public Result<String> updateStaffInfo(@RequestBody Account account) {
         Result<String> result = new Result<>();
-        result.setMessage("update_password").setCode(HttpStatus.OK);
+        result.setMessage("update").setCode(HttpStatus.OK);
         try {
-            Account account = accountService.findOne((String) session.getAttribute("user"));
-
-            if (account.getPassword().equals(updatePasswordDto.getBeforePassword())) {
-                // 用户输入的原密码正确
-                account.setPassword(updatePasswordDto.getAfterPassword());
-                accountService.updatePaswword(account);
-                result.setData("success");
-            } else {
-                result.setData("fail");
-            }
+            accountService.update(account);
+            result.setData("success");
         } catch (Exception e) {
             result.setData("fail");
         }
@@ -143,38 +132,6 @@ public class StaffController {
             result.setData("success");
         }catch (Exception e){
             result.setData("fail");
-        }
-        return result;
-    }
-
-    @ApiOperation("分页查找所有已被删除的文章")
-    @GetMapping("/article/find_all_deleted/{page}/{size}")
-    public Result<PageResult<Article>> articleFindAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size) {
-        Result<PageResult<Article>> result = new Result<>();
-        Page<Article> pageTemp;
-        try {
-            pageTemp = articleService.findAllDeleted(page, size);
-            PageResult<Article> pageResult = new PageResult<>();
-            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
-            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
-        } catch (Exception e) {
-            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
-        }
-        return result;
-    }
-
-    @ApiOperation("分页查找所有未被删除的文章")
-    @GetMapping("/article/find_all_exist/{page}/{size}")
-    public Result<PageResult<Article>> articleFindAllExist(@PathVariable("page") int page, @PathVariable("size") int size) {
-        Result<PageResult<Article>> result = new Result<>();
-        Page<Article> pageTemp;
-        try {
-            pageTemp = articleService.findAllExist(page, size);
-            PageResult<Article> pageResult = new PageResult<>();
-            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
-            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
-        } catch (Exception e) {
-            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
         }
         return result;
     }

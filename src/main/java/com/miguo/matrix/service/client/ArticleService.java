@@ -100,10 +100,11 @@ public class ArticleService {
      * @param size
      * @return
      */
-    public Page<Article> findAllDeleted(int page,int size){
+    public Page<Article> findAllDeleted(int page,int size, String active){
         page--;
         Pageable pageable=PageRequest.of(page,size);
-        return articleRepository.findAllDeletedArticle(pageable);
+        Boolean activeTemp = Boolean.parseBoolean(active);
+        return articleRepository.findAllDeletedArticle(pageable, activeTemp);
     }
 
     /**

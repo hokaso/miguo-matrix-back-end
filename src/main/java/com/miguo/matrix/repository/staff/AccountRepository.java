@@ -10,13 +10,19 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author Noah
  */
 @Repository
 public interface AccountRepository extends JpaRepository<Account, String> {
+
+    /**
+     * 通过id(账号)查找某一个用户，忽略是否被软删除过
+     * @param id
+     * @return
+     */
+    Account findNicknameById(String id);
 
     /**
      * 通过nickname(账号)查找某一个用户，忽略是否被软删除过
@@ -27,21 +33,39 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
     /**
      * 软删除某一个用户
-     * @param nickname
+     * @param id
      * @param date
      * @param updateBy
+     * @param active
      */
     @Modifying
-    @Transactional
-    @Query(value = "update com_staff set is_del = true , update_at = :#{#date} , update_by = :#{#updateBy} where  nickname = :#{#nickname} ", nativeQuery = true)
-    void deleteByNickname(String nickname, Date date,String updateBy);
+    @Transactional(rollbackFor = Exception.class)
+    @Query(value = "update com_staff set is_del = :#{#active} , update_at = :#{#date} , update_by = :#{#updateBy} where id = :#{#id} ", nativeQuery = true)
+    void deleteByNickname(Boolean active, String id, Date date, String updateBy);
 
-    // 查询所有未被软删除的用户
+    /**
+     * 查询所有未被软删除的用户
+     * @param pageable
+     * @return
+     */
     @Query(value = "select * from com_staff where is_del = false",nativeQuery = true)
-    Page<Account> findAllAccount(Pageable pageable);
+    Page<Account> findAllExistAccount(Pageable pageable);
 
-    // 查询所有已被软删除的用户
+    /**
+     * 查询所有已被软删除的用户
+     * @param pageable
+     * @return
+     */
     @Query(value="select * from com_staff where is_del = true",nativeQuery = true)
     Page<Account> findAllDeletedAccount(Pageable pageable);
 
+    /**
+     * 根据关键词、存在状态查询
+     * @param keywords
+     * @param active
+     * @param pageable
+     * @return
+     */
+    @Query(value = "select * from com_staff WHERE ( name LIKE %:#{#keywords}% OR nickname LIKE %:#{#keywords}% ) AND is_del = :active ", nativeQuery = true)
+    Page<Account> findAccountByKeywords(String keywords, Boolean active, Pageable pageable);
 }

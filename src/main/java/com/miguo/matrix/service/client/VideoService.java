@@ -80,8 +80,7 @@ public class VideoService {
     public Page<Video> staffFindAllByKeywords(String keywords, int page, int size, Sort.Direction direction){
         page--;
         Pageable pageable = PageRequest.of(page, size, direction, "update_at");
-        Page<Video> pageTemp = videoRepository.staffFindVideoByKeywords(keywords,pageable);
-        return pageTemp;
+        return videoRepository.staffFindVideoByKeywords(keywords,pageable);
     }
 
     /**

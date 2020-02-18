@@ -18,6 +18,8 @@ import java.util.Date;
 public interface ArticleRepository extends JpaRepository<Article, String> {
 
     /**
+     * ※审核方法
+     *
      * 通过把「is_del」改为「true」来下架多篇文章（并非删除）
      * @param id
      * @param date
@@ -29,7 +31,9 @@ public interface ArticleRepository extends JpaRepository<Article, String> {
     void deleteSomeById(String id, Date date,String updateBy);
 
     /**
-     * 分页返回标题或内容包含某关键字且未被下架的文章条目（客户使用）
+     * ※客户方法
+     *
+     * 分页返回标题或内容包含某关键字且未被下架的文章条目
      * @param keywords
      * @param pageable
      * @return
@@ -38,28 +42,35 @@ public interface ArticleRepository extends JpaRepository<Article, String> {
     Page<Article> findArticleByKeywords(String keywords,Pageable pageable);
 
     /**
-     * 分页返回标题或内容包含某关键字的文章条目（员工使用），当关键字为空时按更新时间顺序返回所有
+     * ※员工方法
+     *
+     * 分页返回标题或内容包含某关键字的文章条目，当关键字为空时按更新时间顺序返回所有
      * @param keywords
      * @param pageable
      * @return
      */
     @Query(value = "select * from client_article WHERE article LIKE %:#{#keywords}% OR title LIKE %:#{#keywords}%",nativeQuery = true)
-    Page<Article> staffFindArticleByKeywords(String keywords,Pageable pageable);
+    Page<Article> staffFindArticleByKeywords(String keywords, Pageable pageable);
 
     /**
-     * 分页返回所有未被下架的文章条目
+     * ※审核方法
+     *
+     * 分页按条件分类查找删除与否的文章
+     * @param pageable
+     * @param active
+     * @return
+     */
+    @Query(value = "select * from client_article where is_del = :active and status != 'draft'",nativeQuery = true)
+    Page<Article> findAllDeletedArticle(Pageable pageable, Boolean active);
+
+    /**
+     * ※审核方法
+     *
+     * 分页返回所有的文章条目
      * @param pageable
      * @return
      */
-    @Query(value = "select * from client_article where is_del = true",nativeQuery = true)
-    Page<Article> findAllDeletedArticle(Pageable pageable);
-
-    /**
-     * 分页返回所有已被下架的文章条目
-     * @param pageable
-     * @return
-     */
-    @Query(value = "select * from client_article where is_del = false",nativeQuery = true)
+    @Query(value = "select * from client_article where status != 'draft'",nativeQuery = true)
     Page<Article> findAllExistArticle(Pageable pageable);
 
     /**
