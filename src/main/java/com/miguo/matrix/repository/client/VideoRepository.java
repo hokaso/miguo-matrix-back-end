@@ -18,6 +18,39 @@ import java.util.Date;
 public interface VideoRepository extends JpaRepository<Video,String> {
 
     /**
+     * ※客户方法
+     *
+     * 分页返回视频标题或内容包含某关键字且未被下架的视频条目（客户使用）
+     * @param keywords
+     * @param pageable
+     * @return
+     */
+    @Query(value = "select * from client_video WHERE video_title LIKE %:#{#keywords}% OR video_profile LIKE %:#{#keywords}% and is_del = false", nativeQuery = true)
+    Page<Video> findVideoByKeywords(String keywords, Pageable pageable);
+
+    /**
+     * ※员工方法：进入某一篇视频修改时使用
+     *
+     * 通过id找视频
+     * @param id
+     * @return
+     */
+    Video findVideoById(String id);
+
+    /**
+     * ※员工方法
+     *
+     * 分页返回视频标题或内容包含某关键字的视频条目，当关键字为空时按更新时间顺序返回所有
+     * @param keywords
+     * @param pageable
+     * @return
+     */
+    @Query(value = "select * from client_video WHERE video_title LIKE %:#{#keywords}% OR video_profile LIKE %:#{#keywords}%", nativeQuery = true)
+    Page<Video> staffFindVideoByKeywords(String keywords, Pageable pageable);
+
+    /**
+     * ※审核方法：该方法与网络安全有关，与业务需求无关，未来迭代版本中使用
+     *
      * 通过把「is_del」改为「true」来下架多个视频（并非删除）
      * @param id
      * @param date
@@ -29,43 +62,25 @@ public interface VideoRepository extends JpaRepository<Video,String> {
     void deleteSomeById(String id, Date date, String updateBy);
 
     /**
-     * 分页返回视频标题或内容包含某关键字且未被下架的视频条目（客户使用）
+     * ※审核方法
+     *
+     * 分页不分类返回所有的视频条目
+     * @param pageable
      * @param keywords
-     * @param pageable
      * @return
      */
-    @Query(value = "select * from client_video WHERE video_title LIKE %:#{#keywords}% OR video_profile LIKE %:#{#keywords}% and is_del = false",nativeQuery = true)
-    Page<Video> findVideoByKeywords(String keywords,Pageable pageable);
+    @Query(value = "select * from client_video where ( video_title LIKE %:#{#keywords}% OR video_profile LIKE %:#{#keywords}% ) and video_status != 'draft'", nativeQuery = true)
+    Page<Video> findAllExistVideo(String keywords, Pageable pageable);
 
     /**
-     * 分页返回视频标题或内容包含某关键字的视频条目（员工使用），当关键字为空时按更新时间顺序返回所有
+     * ※审核方法
+     *
+     * 分页分类返回所有的视频条目
+     * @param pageable
+     * @param active
      * @param keywords
-     * @param pageable
      * @return
      */
-    @Query(value = "select * from client_video WHERE video_title LIKE %:#{#keywords}% OR video_profile LIKE %:#{#keywords}%",nativeQuery = true)
-    Page<Video> staffFindVideoByKeywords(String keywords,Pageable pageable);
-
-    /**
-     * 分页返回所有未被下架的视频条目
-     * @param pageable
-     * @return
-     */
-    @Query(value = "select * from client_video where is_del = false",nativeQuery = true)
-    Page<Video> findAllExistVideo(Pageable pageable);
-
-    /**
-     * 分页返回所有已被下架的视频条目
-     * @param pageable
-     * @return
-     */
-    @Query(value = "select * from client_video where is_del = true",nativeQuery = true)
-    Page<Video> findAllDeletedVideo(Pageable pageable);
-
-    /**
-     * 通过id找视频
-     * @param id
-     * @return
-     */
-    Video findVideoById(String id);
+    @Query(value = "select * from client_video where ( video_title LIKE %:#{#keywords}% OR video_profile LIKE %:#{#keywords}% ) and is_del = :active and video_status != 'draft'",nativeQuery = true)
+    Page<Video> findAllClassVideo(String keywords, Pageable pageable, Boolean active);
 }

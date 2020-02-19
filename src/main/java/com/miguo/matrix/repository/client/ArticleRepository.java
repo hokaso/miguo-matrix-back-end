@@ -18,19 +18,6 @@ import java.util.Date;
 public interface ArticleRepository extends JpaRepository<Article, String> {
 
     /**
-     * ※审核方法
-     *
-     * 通过把「is_del」改为「true」来下架多篇文章（并非删除）
-     * @param id
-     * @param date
-     * @param updateBy
-     */
-    @Modifying
-    @Transactional(rollbackFor = Exception.class)
-    @Query(value = "update client_article set is_del = true , update_at = :#{#date},update_by = :#{#updateBy} where id = :#{#id} ", nativeQuery = true)
-    void deleteSomeById(String id, Date date,String updateBy);
-
-    /**
      * ※客户方法
      *
      * 分页返回标题或内容包含某关键字且未被下架的文章条目
@@ -39,7 +26,16 @@ public interface ArticleRepository extends JpaRepository<Article, String> {
      * @return
      */
     @Query(value = "select * from client_article WHERE article LIKE %:#{#keywords}% OR title LIKE %:#{#keywords}% and is_del = false",nativeQuery = true)
-    Page<Article> findArticleByKeywords(String keywords,Pageable pageable);
+    Page<Article> findArticleByKeywords(String keywords, Pageable pageable);
+
+    /**
+     * ※员工方法：进入某一篇文章修改时使用
+     *
+     * 通过id找文章
+     * @param id
+     * @return
+     */
+    Article findArticleById(String id);
 
     /**
      * ※员工方法
@@ -49,8 +45,21 @@ public interface ArticleRepository extends JpaRepository<Article, String> {
      * @param pageable
      * @return
      */
-    @Query(value = "select * from client_article WHERE article LIKE %:#{#keywords}% OR title LIKE %:#{#keywords}%",nativeQuery = true)
+    @Query(value = "select * from client_article WHERE article LIKE %:#{#keywords}% OR title LIKE %:#{#keywords}%", nativeQuery = true)
     Page<Article> staffFindArticleByKeywords(String keywords, Pageable pageable);
+
+    /**
+     * ※审核方法：该方法与网络安全有关，与业务需求无关，未来迭代版本中使用
+     *
+     * 通过把「is_del」改为「true」来下架多篇文章（并非删除）
+     * @param id
+     * @param date
+     * @param updateBy
+     */
+    @Modifying
+    @Transactional(rollbackFor = Exception.class)
+    @Query(value = "update client_article set is_del = true , update_at = :#{#date},update_by = :#{#updateBy} where id = :#{#id} ", nativeQuery = true)
+    void deleteSomeById(String id, Date date, String updateBy);
 
     /**
      * ※审核方法
@@ -58,25 +67,20 @@ public interface ArticleRepository extends JpaRepository<Article, String> {
      * 分页按条件分类查找删除与否的文章
      * @param pageable
      * @param active
+     * @param keywords
      * @return
      */
-    @Query(value = "select * from client_article where is_del = :active and status != 'draft'",nativeQuery = true)
-    Page<Article> findAllDeletedArticle(Pageable pageable, Boolean active);
+    @Query(value = "select * from client_article where ( article LIKE %:#{#keywords}% OR title LIKE %:#{#keywords}% ) and is_del = :active and status != 'draft'", nativeQuery = true)
+    Page<Article> findAllClassArticle(String keywords, Pageable pageable, Boolean active);
 
     /**
      * ※审核方法
      *
      * 分页返回所有的文章条目
      * @param pageable
+     * @param keywords
      * @return
      */
-    @Query(value = "select * from client_article where status != 'draft'",nativeQuery = true)
-    Page<Article> findAllExistArticle(Pageable pageable);
-
-    /**
-     * 通过id找文章
-     * @param id
-     * @return
-     */
-    Article findArticleById(String id);
+    @Query(value = "select * from client_article where ( article LIKE %:#{#keywords}% OR title LIKE %:#{#keywords}% ) and status != 'draft'", nativeQuery = true)
+    Page<Article> findAllExistArticle(String keywords, Pageable pageable);
 }

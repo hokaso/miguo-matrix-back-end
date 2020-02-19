@@ -33,6 +33,8 @@ public class ArticleService {
     }
 
     /**
+     * ※员工方法
+     *
      * 添加文章
      * @param article
      * @return
@@ -49,6 +51,8 @@ public class ArticleService {
     }
 
     /**
+     * ※审核方法
+     *
      * 批量下架文章
      * @param ids
      */
@@ -60,6 +64,8 @@ public class ArticleService {
     }
 
     /**
+     * ※员工方法
+     *
      * 删除一篇文章
      * @param id
      */
@@ -68,7 +74,9 @@ public class ArticleService {
     }
 
     /**
-     * 分页返回标题或内容包含某关键字且未被下架的文章条目（客户使用）
+     * ※客户方法
+     *
+     * 分页返回标题或内容包含某关键字且未被下架的文章条目
      * @param keywords
      * @param page
      * @param size
@@ -81,7 +89,9 @@ public class ArticleService {
     }
 
     /**
-     * 分页返回标题或内容包含某关键字的文章条目（员工使用），当关键字为空时按更新时间顺序返回所有
+     * ※员工方法
+     *
+     * 分页返回标题或内容包含某关键字的文章条目，当关键字为空时按更新时间顺序返回所有
      * @param keywords
      * @param page
      * @param size
@@ -91,32 +101,36 @@ public class ArticleService {
     public Page<Article> staffFindAllByKeywords(String keywords, int page, int size, Sort.Direction direction){
         page--;
         Pageable pageable = PageRequest.of(page, size, direction, "update_at");
-        return articleRepository.staffFindArticleByKeywords(keywords,pageable);
+        return articleRepository.staffFindArticleByKeywords(keywords, pageable);
     }
 
     /**
-     * 分页返回所有已被下架的文章条目
+     * ※审核方法
+     *
+     * 分页分类返回所有文章条目
      * @param page
      * @param size
      * @return
      */
-    public Page<Article> findAllDeleted(int page,int size, String active){
+    public Page<Article> findAllClass(String keywords, int page,int size, String active, Sort.Direction direction){
         page--;
-        Pageable pageable=PageRequest.of(page,size);
+        Pageable pageable=PageRequest.of(page,size, direction, "create_at");
         Boolean activeTemp = Boolean.parseBoolean(active);
-        return articleRepository.findAllDeletedArticle(pageable, activeTemp);
+        return articleRepository.findAllClassArticle(keywords, pageable, activeTemp);
     }
 
     /**
-     * 分页返回所有未被下架的文章条目
+     * ※审核方法
+     *
+     * 分页不分类返回所有文章条目
      * @param page
      * @param size
      * @return
      */
-    public Page<Article> findAllExist(int page,int size){
+    public Page<Article> findAllExist(String keywords, int page,int size, Sort.Direction direction){
         page--;
-        Pageable pageable=PageRequest.of(page,size);
-        return articleRepository.findAllExistArticle(pageable);
+        Pageable pageable=PageRequest.of(page,size, direction, "create_at");
+        return articleRepository.findAllExistArticle(keywords, pageable);
     }
 
     /**

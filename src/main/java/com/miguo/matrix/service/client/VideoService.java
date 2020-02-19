@@ -84,25 +84,28 @@ public class VideoService {
     }
 
     /**
-     * 分页返回所有已被下架的视频条目
+     * 分页分类返回所有视频条目
      * @param page
      * @param size
      * @return
      */
-    public Page<Video> findAllDeleted(int page,int size){
-        Pageable pageable = PageRequest.of(page,size);
-        return videoRepository.findAllDeletedVideo(pageable);
+    public Page<Video> findAllClass(String keywords, int page,int size, String active, Sort.Direction direction){
+        page--;
+        Pageable pageable = PageRequest.of(page,size, direction, "create_at");
+        Boolean activeTemp = Boolean.parseBoolean(active);
+        return videoRepository.findAllClassVideo(keywords, pageable, activeTemp);
     }
 
     /**
-     * 分页返回所有未被下架的视频条目
+     * 分页不分类返回所有视频条目
      * @param page
      * @param size
      * @return
      */
-    public Page<Video> findAllExist(int page,int size){
-        Pageable pageable = PageRequest.of(page,size);
-        return videoRepository.findAllExistVideo(pageable);
+    public Page<Video> findAllExist(String keywords, int page, int size, Sort.Direction direction){
+        page--;
+        Pageable pageable = PageRequest.of(page, size, direction, "create_at");
+        return videoRepository.findAllExistVideo(keywords, pageable);
     }
 
     /**

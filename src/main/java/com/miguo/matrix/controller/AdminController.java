@@ -5,8 +5,11 @@ import com.miguo.matrix.dto.Result;
 import com.miguo.matrix.dto.AdminSearchDto;
 import com.miguo.matrix.dto.staff.UpdatePasswordDto;
 import com.miguo.matrix.entity.client.Article;
+import com.miguo.matrix.entity.client.Swiper;
+import com.miguo.matrix.entity.client.Video;
 import com.miguo.matrix.entity.staff.Account;
 import com.miguo.matrix.service.client.ArticleService;
+import com.miguo.matrix.service.client.SwiperService;
 import com.miguo.matrix.service.client.VideoService;
 import com.miguo.matrix.service.staff.AccountService;
 import io.swagger.annotations.Api;
@@ -14,6 +17,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +39,11 @@ public class AdminController {
     @Autowired
     private VideoService videoService;
 
+    @Autowired
+    private SwiperService swiperService;
+
+    //    -----------以下为员工信息的增删改查----------
+
     @ApiOperation(value = "分页查询所有被删除的员工")
     @GetMapping("/fina_all_deleted/{page}/{size}")
     public Result<PageResult<Account>> findAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size) {
@@ -49,7 +58,6 @@ public class AdminController {
         } catch (Exception e) {
             result.setData(null).setMessage("fail").setCode(HttpStatus.OK);
         }
-
         return result;
     }
 
@@ -139,15 +147,23 @@ public class AdminController {
         return result;
     }
 
+    //    -----------以下为文章审核的相关方法----------
+
     @ApiOperation("分页按条件分类查找删除与否的文章")
-    @GetMapping("/article/find_all_deleted/{page}/{size}/{active}")
-    public Result<PageResult<Article>> articleFindAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size, @PathVariable("active") String active) {
+    @PostMapping("/article/find_all_class")
+    public Result<PageResult<Article>> articleFindAllClass(@RequestBody AdminSearchDto searchDto)
+    {
         Result<PageResult<Article>> result = new Result<>();
         Page<Article> pageTemp;
         try {
-            pageTemp = articleService.findAllDeleted(page, size, active);
+            if(searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())){
+                pageTemp = articleService.findAllClass("", searchDto.getPage(), searchDto.getSize(), searchDto.getActive(), searchDto.getDirection());
+            }
+            else{
+                pageTemp = articleService.findAllClass(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize(), searchDto.getActive(), searchDto.getDirection());
+            }
             PageResult<Article> pageResult = new PageResult<>();
-            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
+            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(searchDto.getPage()).setSize(searchDto.getSize());
             result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
         } catch (Exception e) {
             result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
@@ -156,14 +172,20 @@ public class AdminController {
     }
 
     @ApiOperation("分页查找所有的文章")
-    @GetMapping("/article/find_all_exist/{page}/{size}")
-    public Result<PageResult<Article>> articleFindAllExist(@PathVariable("page") int page, @PathVariable("size") int size) {
+    @PostMapping("/article/find_all")
+    public Result<PageResult<Article>> articleFindAllExist(@RequestBody AdminSearchDto searchDto)
+    {
         Result<PageResult<Article>> result = new Result<>();
         Page<Article> pageTemp;
         try {
-            pageTemp = articleService.findAllExist(page, size);
+            if(searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())){
+                pageTemp = articleService.findAllExist("", searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+            }
+            else{
+                pageTemp = articleService.findAllExist(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+            }
             PageResult<Article> pageResult = new PageResult<>();
-            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
+            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(searchDto.getPage()).setSize(searchDto.getSize());
             result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
         } catch (Exception e) {
             result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
@@ -171,4 +193,94 @@ public class AdminController {
         return result;
     }
 
+    //    -----------以下为视频审核的相关方法----------
+
+    @ApiOperation("分页分类查找所有视频")
+    @PostMapping("/video/find_all_class")
+    public Result<PageResult<Video>> videoFindAllClass(@RequestBody AdminSearchDto searchDto){
+        Result<PageResult<Video>> result = new Result<>();
+        Page<Video> pageTemp;
+        try {
+            if (searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())) {
+                pageTemp = videoService.findAllClass("", searchDto.getPage(), searchDto.getSize(), searchDto.getActive(), searchDto.getDirection());
+            }
+            else{
+                pageTemp = videoService.findAllClass(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize(), searchDto.getActive(), searchDto.getDirection());
+            }
+            PageResult<Video> pageResult = new PageResult<>();
+            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(searchDto.getPage()).setSize(searchDto.getSize());
+            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
+        } catch (Exception e) {
+            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
+        }
+        return result;
+    }
+
+    @ApiOperation("分页查找所有未被删除的视频")
+    @PostMapping("/video/find_all")
+    public Result<PageResult<Video>> videoFindAllExist(@RequestBody AdminSearchDto searchDto){
+        Result<PageResult<Video>> result = new Result<>();
+        Page<Video> pageTemp;
+        try {
+            if (searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())) {
+                pageTemp = videoService.findAllExist("", searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+            }
+            else{
+                pageTemp = videoService.findAllExist(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+            }
+            PageResult<Video> pageResult = new PageResult<>();
+            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(searchDto.getPage()).setSize(searchDto.getSize());
+            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
+        } catch (Exception e) {
+            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
+        }
+        return result;
+    }
+
+    //    -----------以下为轮播图审核的相关方法----------
+
+
+
+
+    @ApiOperation("分页分类查找所有视频")
+    @PostMapping("/swiper/find_all_class")
+    public Result<PageResult<Swiper>> swiperFindAllClass(@RequestBody AdminSearchDto searchDto){
+        Result<PageResult<Swiper>> result = new Result<>();
+        Page<Swiper> pageTemp;
+        try {
+            if (searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())) {
+                pageTemp = swiperService.findAllClass("", searchDto.getPage(), searchDto.getSize(), searchDto.getActive(), searchDto.getDirection());
+            }
+            else{
+                pageTemp = swiperService.findAllClass(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize(), searchDto.getActive(), searchDto.getDirection());
+            }
+            PageResult<Swiper> pageResult = new PageResult<>();
+            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(searchDto.getPage()).setSize(searchDto.getSize());
+            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
+        } catch (Exception e) {
+            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
+        }
+        return result;
+    }
+
+    @ApiOperation("分页查找所有未被删除的视频")
+    @PostMapping("/swiper/find_all")
+    public Result<PageResult<Swiper>> swiperFindAllExist(@RequestBody AdminSearchDto searchDto){
+        Result<PageResult<Swiper>> result = new Result<>();
+        Page<Swiper> pageTemp;
+        try {
+            if (searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())) {
+                pageTemp = swiperService.findAllExist("", searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+            }
+            else{
+                pageTemp = swiperService.findAllExist(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
+            }
+            PageResult<Swiper> pageResult = new PageResult<>();
+            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(searchDto.getPage()).setSize(searchDto.getSize());
+            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
+        } catch (Exception e) {
+            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
+        }
+        return result;
+    }
 }

@@ -68,4 +68,27 @@ public interface SwiperRepository extends JpaRepository<Swiper,String> {
      * @return
      */
     Swiper findWebSwiperById(String id);
+
+    /**
+     * ※审核方法
+     *
+     * 分页按条件分类查找删除与否的文章
+     * @param pageable
+     * @param active
+     * @param keywords
+     * @return
+     */
+    @Query(value = "select * from client_swiper where ( swiper_name LIKE %:#{#keywords}% ) and is_del = :active and swiper_status != 'draft'", nativeQuery = true)
+    Page<Swiper> findAllClassSwiper(String keywords, Pageable pageable, Boolean active);
+
+    /**
+     * ※审核方法
+     *
+     * 分页返回所有的文章条目
+     * @param pageable
+     * @param keywords
+     * @return
+     */
+    @Query(value = "select * from client_swiper where ( swiper_name LIKE %:#{#keywords}% ) and swiper_status != 'draft'", nativeQuery = true)
+    Page<Swiper> findAllExistSwiper(String keywords, Pageable pageable);
 }

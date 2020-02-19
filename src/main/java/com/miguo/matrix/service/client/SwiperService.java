@@ -135,4 +135,33 @@ public class SwiperService {
         swiperTemp.setUpdateAt(new Date());
         swiperRepository.saveAndFlush(swiperTemp);
     }
+
+    /**
+     * ※审核方法
+     *
+     * 分页分类返回所有条目
+     * @param page
+     * @param size
+     * @return
+     */
+    public Page<Swiper> findAllClass(String keywords, int page,int size, String active, Sort.Direction direction){
+        page--;
+        Pageable pageable=PageRequest.of(page,size, direction, "create_at");
+        Boolean activeTemp = Boolean.parseBoolean(active);
+        return swiperRepository.findAllClassSwiper(keywords, pageable, activeTemp);
+    }
+
+    /**
+     * ※审核方法
+     *
+     * 分页不分类返回所有条目
+     * @param page
+     * @param size
+     * @return
+     */
+    public Page<Swiper> findAllExist(String keywords, int page,int size, Sort.Direction direction){
+        page--;
+        Pageable pageable=PageRequest.of(page,size, direction, "create_at");
+        return swiperRepository.findAllExistSwiper(keywords, pageable);
+    }
 }

@@ -142,7 +142,7 @@ public class StaffController {
         Result<PageResult<Article>> result = new Result<>();
         Page<Article> page;
         try {
-            if (searchDto.getKeywords() == null || searchDto.getKeywords().equals("")) {
+            if (searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())) {
                 page = articleService.staffFindAllByKeywords("", searchDto.getPage(), searchDto.getSize(), searchDto.getDirection());
                 // 当关键字为空时，查询所有
             } else {
@@ -222,38 +222,6 @@ public class StaffController {
             result.setCode(HttpStatus.OK).setMessage("update").setData("success");
         }catch (Exception e){
             result.setCode(HttpStatus.OK).setMessage("update").setData("fail");
-        }
-        return result;
-    }
-
-    @ApiOperation("分页查找所有已被删除的视频")
-    @GetMapping("/video/find_all_deleted/{page}/{size}")
-    public Result<PageResult<Video>> videoFindAllDeleted(@PathVariable("page") int page, @PathVariable("size") int size){
-        Result<PageResult<Video>> result = new Result<>();
-        Page<Video> pageTemp;
-        try {
-            pageTemp = videoService.findAllDeleted(page, size);
-            PageResult<Video> pageResult = new PageResult<>();
-            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
-            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
-        } catch (Exception e) {
-            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
-        }
-        return result;
-    }
-
-    @ApiOperation("分页查找所有未被删除的视频")
-    @GetMapping("/video/find_all_exist/{page}/{size}")
-    public Result<PageResult<Video>> videoFindAllExist(@PathVariable("page") int page, @PathVariable("size") int size){
-        Result<PageResult<Video>> result = new Result<>();
-        Page<Video> pageTemp;
-        try {
-            pageTemp = videoService.findAllExist(page, size);
-            PageResult<Video> pageResult = new PageResult<>();
-            pageResult.setTotal(pageTemp.getTotalElements()).setData(pageTemp.getContent()).setPage(page).setSize(size);
-            result.setData(pageResult).setCode(HttpStatus.OK).setMessage("success");
-        } catch (Exception e) {
-            result.setData(null).setCode(HttpStatus.OK).setMessage("fail");
         }
         return result;
     }
