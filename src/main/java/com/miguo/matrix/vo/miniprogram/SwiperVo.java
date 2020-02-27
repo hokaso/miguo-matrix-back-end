@@ -1,17 +1,14 @@
 package com.miguo.matrix.vo.miniprogram;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.miguo.matrix.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.persistence.Table;
 import java.util.Date;
 
 /**

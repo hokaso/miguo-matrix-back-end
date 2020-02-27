@@ -3,6 +3,7 @@ package com.miguo.matrix.service.client;
 import com.miguo.matrix.entity.client.Article;
 import com.miguo.matrix.repository.client.ArticleRepository;
 import com.miguo.matrix.utils.SnowflakeIdWorker;
+import com.miguo.matrix.vo.web.ArticleVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -71,6 +72,21 @@ public class ArticleService {
      */
     public void deleteOne(String id){
         articleRepository.deleteById(id);
+    }
+
+    /**
+     * ※客户方法
+     *
+     * 返回挂上首页的文章条目
+     * @param keywords
+     * @param page
+     * @param size
+     * @return
+     */
+    public Page<ArticleVo> findSome(String keywords, int page, int size){
+        page--;
+        Pageable pageable = PageRequest.of(page, size);
+        return articleRepository.findSomeArticle(pageable);
     }
 
     /**

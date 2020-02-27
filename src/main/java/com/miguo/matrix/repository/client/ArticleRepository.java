@@ -1,6 +1,7 @@
 package com.miguo.matrix.repository.client;
 
 import com.miguo.matrix.entity.client.Article;
+import com.miguo.matrix.vo.web.ArticleVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,8 +26,28 @@ public interface ArticleRepository extends JpaRepository<Article, String> {
      * @param pageable
      * @return
      */
-    @Query(value = "select * from client_article WHERE article LIKE %:#{#keywords}% OR title LIKE %:#{#keywords}% and is_del = false",nativeQuery = true)
+    @Query(value = "select * from client_article WHERE ( article LIKE %:#{#keywords}% OR title LIKE %:#{#keywords}% ) and is_del = false and status = 'reviewed'",nativeQuery = true)
     Page<Article> findArticleByKeywords(String keywords, Pageable pageable);
+
+    /**
+     * ※客户方法
+     *
+     * 返回挂上首页的文章条目
+     * @param pageable
+     * @return
+     */
+    @Query("SELECT new com.miguo.matrix.vo.web.ArticleVo(" +
+            "a.id, " +
+            "SUBSTRING ( a.article, 1, 70 ) as article, " +
+            "a.title, " +
+            "a.pic, " +
+            "a.author, " +
+            "a.createAt) " +
+            "from Article a " +
+            "WHERE a.isDel = false " +
+            "and a.status = 'reviewed' " +
+            "order by a.createAt desc")
+    Page<ArticleVo> findSomeArticle(Pageable pageable);
 
     /**
      * ※员工方法：进入某一篇文章修改时使用

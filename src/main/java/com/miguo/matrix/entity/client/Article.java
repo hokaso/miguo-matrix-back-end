@@ -50,4 +50,8 @@ public class Article extends BaseEntity {
     @Column(name = "status")
     @ApiModelProperty("状态")
     private String status;
+
+    @Column(name = "pic")
+    @ApiModelProperty("文章头图")
+    private String pic;
 }

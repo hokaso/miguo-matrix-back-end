@@ -59,7 +59,7 @@ public interface SwiperRepository extends JpaRepository<Swiper,String> {
      * @param
      * @return
      */
-    @Query(value = "select * from client_swiper where is_del = false",nativeQuery = true)
+    @Query(value = "select * from client_swiper where is_del = false and swiper_status = 'reviewed'",nativeQuery = true)
     List<Swiper> clientFindAllExistSwiper();
 
     /**

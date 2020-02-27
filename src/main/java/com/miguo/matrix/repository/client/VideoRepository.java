@@ -25,7 +25,7 @@ public interface VideoRepository extends JpaRepository<Video,String> {
      * @param pageable
      * @return
      */
-    @Query(value = "select * from client_video WHERE video_title LIKE %:#{#keywords}% OR video_profile LIKE %:#{#keywords}% and is_del = false", nativeQuery = true)
+    @Query(value = "select * from client_video WHERE ( video_title LIKE %:#{#keywords}% OR video_profile LIKE %:#{#keywords}% ) and is_del = false and video_status = 'reviewed'", nativeQuery = true)
     Page<Video> findVideoByKeywords(String keywords, Pageable pageable);
 
     /**

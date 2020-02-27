@@ -9,6 +9,7 @@ import com.miguo.matrix.entity.client.Video;
 import com.miguo.matrix.service.client.ArticleService;
 import com.miguo.matrix.service.client.SwiperService;
 import com.miguo.matrix.service.client.VideoService;
+import com.miguo.matrix.vo.web.ArticleVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +46,28 @@ public class ClientController {
     @Autowired
     private SwiperService swiperService;
 
+    @ApiOperation("查找挂上首页的文章")
+    @PostMapping("/article/find_some")
+    public Result<PageResult<ArticleVo>> articleFindSome(@RequestBody SearchDto searchDto) {
+        Result<PageResult<ArticleVo>> result = new Result<>();
+        Page<ArticleVo> page;
+        try {
+            if (searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())) {
+                page = articleService.findSome("", searchDto.getPage(), searchDto.getSize());
+                // 当关键字为空时，查询所有
+            } else {
+                page = articleService.findSome(searchDto.getKeywords(), searchDto.getPage(), searchDto.getSize());
+            }
+            PageResult<ArticleVo> pageResult = new PageResult<>();
+            pageResult.setSize(searchDto.getSize()).setPage(searchDto.getPage()).setData(page.getContent()).setTotal(page.getTotalElements());
+            result.setMessage("success").setCode(HttpStatus.OK).setData(pageResult);
+        } catch (Exception e) {
+            result.setMessage("fail").setCode(HttpStatus.OK).setData(null);
+        }
+
+        return result;
+    }
+
     @ApiOperation("分页查找所有模糊查询且未被软删除的文章")
     @PostMapping("/article/find_all_by_keywords")
     public Result<PageResult<Article>> articleFindAllByKeywords(@RequestBody SearchDto searchDto) {
@@ -66,7 +89,6 @@ public class ClientController {
 
         return result;
     }
-
 
     @ApiOperation("找某一篇文章")
     @GetMapping("/article/find_one_by_id/{id}")
