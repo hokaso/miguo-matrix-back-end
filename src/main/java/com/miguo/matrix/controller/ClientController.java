@@ -34,7 +34,6 @@ public class ClientController {
      * 2.查询所有文章/视频（分页）
      * 3.获取最新发布的4篇文章和视频
      *
-     *
      * */
 
     @Autowired
@@ -110,7 +109,7 @@ public class ClientController {
         Result<PageResult<Video>> result = new Result<>();
         Page<Video> page;
         try {
-            if (searchDto.getKeywords() == null || searchDto.getKeywords().equals("")) {
+            if (searchDto.getKeywords() == null || "".equals(searchDto.getKeywords())) {
                 page = videoService.findAllByKeywords("", searchDto.getPage(), searchDto.getSize());
             // 当关键字为空时，查询所有
             } else {
@@ -145,7 +144,7 @@ public class ClientController {
         Result<Swiper> result = new Result<>();
         result.setMessage("find_one_by_id").setCode(HttpStatus.OK);
         try {
-            Swiper swiper = swiperService.findOneById(id).get();
+            Swiper swiper = swiperService.findOneById(id).orElse(null);
             result.setData(swiper).setMessage("success").setCode(HttpStatus.OK);
         } catch (Exception e) {
             result.setData(null).setMessage("fail").setCode(HttpStatus.OK);

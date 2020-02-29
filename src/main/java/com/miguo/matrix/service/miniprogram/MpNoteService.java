@@ -66,5 +66,9 @@ public class MpNoteService {
         noteTemp.setUpdateAt(new Date());
         noteRepository.saveAndFlush(noteTemp);
     }
+
+    public List<Note> findActiveOne(String id) {
+        return noteRepository.findActiveNote(id,new Date());
+    }
     
 }

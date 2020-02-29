@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author Hocassian
  */
@@ -44,4 +46,14 @@ public interface MpRecordRepository extends JpaRepository<Record,String> {
      * @return
      */
     Record findRecordById(String id);
+
+    /**
+     * 通过openid确定这个用户投过票没
+     * @param openid
+     * @return
+     */
+    @Query(value = "SELECT case when record_openid = :openid then 1 else 0 end FROM vote_records", nativeQuery = true)
+    String findIsVoted(String openid);
+
+
 }

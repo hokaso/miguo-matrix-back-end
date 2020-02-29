@@ -66,4 +66,9 @@ public class MpRecordService {
         recordTemp.setUpdateAt(new Date());
         recordRepository.saveAndFlush(recordTemp);
     }
+
+    public String checkIsVoted(Record record){
+        String openid = record.getRecordOpenid();
+        return recordRepository.findIsVoted(openid);
+    }
 }

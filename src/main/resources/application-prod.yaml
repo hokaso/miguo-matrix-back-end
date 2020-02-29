@@ -5,15 +5,15 @@ server:
   port: 9090
   address:
 #  ssl:
-#    key-store: classpath:ad.hocassian.cn.jks
+#    key-store: classpath:migotimes.com.jks
 #    key-store-password: gKFtOquzlR
 #    keyStoreType: JKS
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/miguo-matrix?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    url: jdbc:mysql://localhost:3306/miguo_matrix?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
     username: root
-    password: 5f5bb7c8fd9757fe
+    password: b66a33eca6314e6a
   jpa:
     show-sql: true
     hibernate:

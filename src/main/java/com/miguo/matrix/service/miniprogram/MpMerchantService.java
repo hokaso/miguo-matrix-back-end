@@ -66,5 +66,9 @@ public class MpMerchantService {
         merchantTemp.setUpdateAt(new Date());
         merchantRepository.saveAndFlush(merchantTemp);
     }
+
+    public List<Merchant> findActiveOne(String id) {
+        return merchantRepository.findActiveMerchant(id);
+    }
     
 }

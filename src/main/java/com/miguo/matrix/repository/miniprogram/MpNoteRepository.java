@@ -8,6 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
+import java.util.List;
+
 /**
  * @author Hocassian
  */
@@ -42,4 +45,13 @@ public interface MpNoteRepository extends JpaRepository<Note,String> {
      * @return
      */
     Note findNoteById(String id);
+
+    /**
+     * 通过id找激活的公告对象
+     * @param id
+     * @param date
+     * @return
+     */
+    @Query(value = "select * from vote_notes WHERE activity_id = :#{#id} and note_display_time < cast(:date as datetime)",nativeQuery = true)
+    List<Note> findActiveNote(String id, Date date);
 }

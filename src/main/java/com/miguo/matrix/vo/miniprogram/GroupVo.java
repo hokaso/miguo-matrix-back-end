@@ -49,7 +49,7 @@ public class GroupVo {
     private String groupProfile;
 
     @ApiModelProperty("获票数")
-    private String groupVotes;
+    private Integer groupVotes;
 
     @ApiModelProperty("缩略图")
     private String groupPic;

@@ -39,7 +39,7 @@ public class Group extends BaseEntity {
 
     @Column(name = "group_votes")
     @ApiModelProperty("获票数")
-    private String groupVotes;
+    private Integer groupVotes;
 
     @Column(name = "group_pic")
     @ApiModelProperty("缩略图")

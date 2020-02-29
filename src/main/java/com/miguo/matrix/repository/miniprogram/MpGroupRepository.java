@@ -5,9 +5,12 @@ import com.miguo.matrix.vo.miniprogram.GroupVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -54,4 +57,22 @@ public interface MpGroupRepository extends JpaRepository<Group,String> {
      * @return
      */
     Group findGroupById(String id);
+
+    /**
+     * 通过id找激活的投票对象序列
+     * @param id
+     * @return
+     */
+    @Query(value = "select * from vote_groups WHERE activity_id = :#{#id}", nativeQuery = true)
+    List<Group> findActiveGroup(String id);
+
+    /**
+     * 通过id定位投票对象，然后实现投票数的自增（+1）
+     * @param id
+     */
+
+    @Modifying
+    @Transactional(rollbackFor = Exception.class)
+    @Query(value = "update `vote_groups` set group_votes=group_votes+1 where id = :#{#id}", nativeQuery = true)
+    void voteForGroup(String id);
 }

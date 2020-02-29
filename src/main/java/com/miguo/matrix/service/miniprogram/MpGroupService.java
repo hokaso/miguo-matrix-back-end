@@ -48,6 +48,7 @@ public class MpGroupService {
         groupTemp.setIsDel(false);
         groupTemp.setCreateBy((String) session.getAttribute("user"));
         groupTemp.setUpdateBy((String) session.getAttribute("user"));
+        groupTemp.setGroupVotes(0);
         groupRepository.save(groupTemp);
     }
 
@@ -86,5 +87,12 @@ public class MpGroupService {
         groupTemp.setUpdateAt(new Date());
         groupRepository.saveAndFlush(groupTemp);
     }
-    
+
+    public List<Group> findActiveOne(String id) {
+        return groupRepository.findActiveGroup(id);
+    }
+
+    public void vote(String id){
+        groupRepository.voteForGroup(id);
+    }
 }

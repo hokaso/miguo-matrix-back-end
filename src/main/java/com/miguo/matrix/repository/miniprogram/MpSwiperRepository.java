@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author Hocassian
  */
@@ -41,4 +43,12 @@ public interface MpSwiperRepository extends JpaRepository<Swiper,String> {
      * @return
      */
     Swiper findSwiperById(String id);
+
+    /**
+     * 通过id找激活的投票对象
+     * @param id
+     * @return
+     */
+    @Query(value = "select * from vote_swipers WHERE activity_id = :#{#id}",nativeQuery = true)
+    List<Swiper> findActiveSwiper(String id);
 }

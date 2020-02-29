@@ -79,7 +79,7 @@ public interface ArticleRepository extends JpaRepository<Article, String> {
      */
     @Modifying
     @Transactional(rollbackFor = Exception.class)
-    @Query(value = "update client_article set is_del = true , update_at = :#{#date},update_by = :#{#updateBy} where id = :#{#id} ", nativeQuery = true)
+    @Query(value = "update client_article set is_del = true, update_at = :#{#date}, update_by = :#{#updateBy} where id = :#{#id}", nativeQuery = true)
     void deleteSomeById(String id, Date date, String updateBy);
 
     /**

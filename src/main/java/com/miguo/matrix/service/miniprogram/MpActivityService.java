@@ -108,5 +108,7 @@ public class MpActivityService {
         activityTemp.setUpdateAt(new Date());
         activityRepository.saveAndFlush(activityTemp);
     }
+
+    public List<Activity> findActiveOne() { return activityRepository.findActiveActivity(); }
     
 }

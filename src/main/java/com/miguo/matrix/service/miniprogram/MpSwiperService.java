@@ -66,5 +66,10 @@ public class MpSwiperService {
         swiperTemp.setUpdateAt(new Date());
         swiperRepository.saveAndFlush(swiperTemp);
     }
-    
+
+    public List<Swiper> findActiveOne(String id) {
+        return swiperRepository.findActiveSwiper(id);
+    }
+
+
 }
