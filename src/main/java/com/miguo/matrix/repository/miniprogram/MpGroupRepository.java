@@ -67,10 +67,17 @@ public interface MpGroupRepository extends JpaRepository<Group,String> {
     List<Group> findActiveGroup(String id);
 
     /**
+     * 通过id找激活的投票对象序列（排行榜）
+     * @param id
+     * @return
+     */
+    @Query(value = "select * from vote_groups WHERE activity_id = :#{#id} order by group_votes DESC limit 3", nativeQuery = true)
+    List<Group> findRankGroup(String id);
+
+    /**
      * 通过id定位投票对象，然后实现投票数的自增（+1）
      * @param id
      */
-
     @Modifying
     @Transactional(rollbackFor = Exception.class)
     @Query(value = "update `vote_groups` set group_votes=group_votes+1 where id = :#{#id}", nativeQuery = true)

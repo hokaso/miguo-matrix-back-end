@@ -34,6 +34,7 @@ public interface ArticleRepository extends JpaRepository<Article, String> {
      *
      * 返回挂上首页的文章条目
      * @param pageable
+     * @param keywords
      * @return
      */
     @Query("SELECT new com.miguo.matrix.vo.web.ArticleVo(" +
@@ -44,10 +45,11 @@ public interface ArticleRepository extends JpaRepository<Article, String> {
             "a.author, " +
             "a.createAt) " +
             "from Article a " +
-            "WHERE a.isDel = false " +
+            "WHERE ( a.article LIKE %:#{#keywords}% OR a.title LIKE %:#{#keywords}% ) " +
+            "and a.isDel = false " +
             "and a.status = 'reviewed' " +
             "order by a.createAt desc")
-    Page<ArticleVo> findSomeArticle(Pageable pageable);
+    Page<ArticleVo> findSomeArticle(String keywords, Pageable pageable);
 
     /**
      * ※员工方法：进入某一篇文章修改时使用

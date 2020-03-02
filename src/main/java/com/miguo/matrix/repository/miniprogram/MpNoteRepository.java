@@ -52,6 +52,6 @@ public interface MpNoteRepository extends JpaRepository<Note,String> {
      * @param date
      * @return
      */
-    @Query(value = "select * from vote_notes WHERE activity_id = :#{#id} and note_display_time < cast(:date as datetime)",nativeQuery = true)
+    @Query(value = "select * from vote_notes WHERE activity_id = :#{#id} and note_display_time < cast(:date as datetime) order by note_display_time DESC",nativeQuery = true)
     List<Note> findActiveNote(String id, Date date);
 }

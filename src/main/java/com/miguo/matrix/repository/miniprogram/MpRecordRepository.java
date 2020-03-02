@@ -37,7 +37,7 @@ public interface MpRecordRepository extends JpaRepository<Record,String> {
             "g.groupName) " +
             "FROM Record r " +
             "LEFT JOIN Group g ON r.groupId=g.id " +
-            "WHERE r.recordNickname LIKE %:#{#keywords}%")
+            "WHERE r.recordOpenid LIKE %:#{#keywords}%")
     Page<RecordVo> findRecordByKeywords(String keywords, Pageable pageable);
 
     /**

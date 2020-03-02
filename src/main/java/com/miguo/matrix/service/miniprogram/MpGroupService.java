@@ -92,6 +92,10 @@ public class MpGroupService {
         return groupRepository.findActiveGroup(id);
     }
 
+    public List<Group> findRank(String id) {
+        return groupRepository.findRankGroup(id);
+    }
+
     public void vote(String id){
         groupRepository.voteForGroup(id);
     }

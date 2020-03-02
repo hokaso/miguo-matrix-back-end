@@ -38,4 +38,8 @@ public class Activity extends BaseEntity {
     @Column(name = "activity_active")
     @ApiModelProperty("活动是否活跃")
     private Boolean activityActive;
+
+    @Column(name = "activity_live")
+    @ApiModelProperty("活动直播链接")
+    private String activityLive;
 }

@@ -1,16 +1,22 @@
 package com.miguo.matrix.controller.miniprogram;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.miguo.matrix.dto.OpenIdJson;
 import com.miguo.matrix.dto.Result;
 import com.miguo.matrix.entity.miniprogram.*;
 import com.miguo.matrix.service.miniprogram.*;
+import com.miguo.matrix.utils.HttpUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Hocassian
@@ -68,8 +74,8 @@ public class ClientMiniProgramController {
     }
 
     @ApiOperation("查找活躍的投票对象")
-    @GetMapping("/group/find_active/{id}")
-    public Result<List<Group>> findActiveGroup(@PathVariable("id") String id) {
+    @GetMapping("/group/find_active")
+    public Result<List<Group>> findActiveGroup(String id) {
         Result<List<Group>> result = new Result<>();
         List<Group> list;
         try {
@@ -81,9 +87,32 @@ public class ClientMiniProgramController {
         return result;
     }
 
+    @ApiOperation("用于返回该表联结的值")
+    @GetMapping("/group/find_group_id")
+    public Result<Optional<Group>> findGroupById(String id){
+        Optional<Group> list= groupService.findById(id);
+        Result<Optional<Group>> result =new Result<>();
+        result.setCode(HttpStatus.OK).setData(list).setMessage("success");
+        return result;
+    }
+
+    @ApiOperation("查找活躍的投票对象")
+    @GetMapping("/group/find_rank")
+    public Result<List<Group>> findRankGroup(String id) {
+        Result<List<Group>> result = new Result<>();
+        List<Group> list;
+        try {
+            list = groupService.findRank(id);
+            result.setMessage("success").setCode(HttpStatus.OK).setData(list);
+        } catch (Exception e) {
+            result.setMessage("fail").setCode(HttpStatus.OK).setData(null);
+        }
+        return result;
+    }
+
     @ApiOperation("查找活躍的轮播图")
-    @GetMapping("/swiper/find_active/{id}")
-    public Result<List<Swiper>> findActiveSwiper(@PathVariable("id") String id) {
+    @GetMapping("/swiper/find_active")
+    public Result<List<Swiper>> findActiveSwiper(String id) {
         Result<List<Swiper>> result = new Result<>();
         List<Swiper> list;
         try {
@@ -96,8 +125,8 @@ public class ClientMiniProgramController {
     }
 
     @ApiOperation("查找活躍的赞助商")
-    @GetMapping("/merchant/find_active/{id}")
-    public Result<List<Merchant>> findActiveMerchant(@PathVariable("id") String id) {
+    @GetMapping("/merchant/find_active")
+    public Result<List<Merchant>> findActiveMerchant(String id) {
         Result<List<Merchant>> result = new Result<>();
         List<Merchant> list;
         try {
@@ -110,8 +139,8 @@ public class ClientMiniProgramController {
     }
 
     @ApiOperation("根据时间查找活躍的公告")
-    @GetMapping("/note/find_active/{id}")
-    public Result<List<Note>> findActiveNote(@PathVariable("id") String id) {
+    @GetMapping("/note/find_active")
+    public Result<List<Note>> findActiveNote(String id) {
         Result<List<Note>> result = new Result<>();
         List<Note> list;
         try {
@@ -140,6 +169,37 @@ public class ClientMiniProgramController {
             }
         } catch (Exception e) {
             result.setData("fail");
+        }
+        return result;
+    }
+
+    @PostMapping("/user/login")
+    public Result<OpenIdJson> userLogin(@RequestParam("code") String code) {
+        Result<OpenIdJson> result = new Result<>();
+        RestTemplate restTemplate = new RestTemplate();
+        try{
+            String appSecret = "8e863b83209c2d589a6918b922d396c0";
+            String appId = "wx69554e9794e7394b";
+            String resultTemp = "https://api.weixin.qq.com/sns/jscode2session?appid="
+                    + appId + "&secret="
+                    + appSecret + "&js_code="
+                    + code
+                    + "&grant_type=authorization_code";
+            String loginResult = null;
+            try {
+                loginResult = restTemplate.getForObject(resultTemp, String.class);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            ObjectMapper mapper = new ObjectMapper();
+            System.out.println(loginResult);
+            OpenIdJson openIdJson = mapper.readValue(loginResult, OpenIdJson.class);
+            result.setCode(HttpStatus.OK).setMessage("code").setData(openIdJson);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            result.setCode(HttpStatus.OK).setMessage("fail").setData(null);
         }
         return result;
     }

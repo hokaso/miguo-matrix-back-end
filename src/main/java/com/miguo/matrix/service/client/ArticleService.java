@@ -86,7 +86,7 @@ public class ArticleService {
     public Page<ArticleVo> findSome(String keywords, int page, int size){
         page--;
         Pageable pageable = PageRequest.of(page, size);
-        return articleRepository.findSomeArticle(pageable);
+        return articleRepository.findSomeArticle(keywords, pageable);
     }
 
     /**
