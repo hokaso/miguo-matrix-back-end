@@ -43,9 +43,10 @@ public class LoginController {
      */
     @ApiOperation(value = "系统登录")
     @PostMapping("/login")
-    public Result<String> login(@RequestBody Account account) {
+    public Result<String> login(@RequestBody Account account, HttpServletRequest request) {
         Account accountTemp = accountService.findOne(account.getNickname());
         Result<String> result = new Result<>();
+//        HttpSession session = request.getSession;
         if (!accountService.isExistByNickname(account.getNickname())) {
 
             result.setData("fail").setMessage("用户不存在！").setCode(HttpStatus.OK);
@@ -56,14 +57,15 @@ public class LoginController {
                     result.setData("admin").setMessage("登陆成功！").setCode(HttpStatus.OK);
                     // 200分钟有效期
                     session.setMaxInactiveInterval(1000 * 60 * 200);
-                    session.setAttribute("user", account.getNickname());
+                    request.getSession().setAttribute("user", account.getNickname());
+                    System.out.print((String) session.getAttribute("user"));
                 }
                 // 普通员工登陆
                 else {
                     result.setData("staff").setMessage("登陆成功！").setCode(HttpStatus.OK);
                     // 100分钟有效期
                     session.setMaxInactiveInterval(1000 * 60 * 100);
-                    session.setAttribute("user", account.getNickname());
+                    request.getSession().setAttribute("user", account.getNickname());
                 }
             } else {
                 result.setData("fail").setMessage("密码错误！").setCode(HttpStatus.OK);

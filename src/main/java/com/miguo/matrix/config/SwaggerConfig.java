@@ -43,18 +43,27 @@ public class SwaggerConfig {
     @Bean("staffApi")
     public Docket accountApi() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("员工接口")
+                .groupName("员工接口（官网）")
                 .select()
                 .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
                 .paths(PathSelectors.regex("/staff.*"))
                 .build()
                 .apiInfo(apiInfo());
     }
-
+    @Bean("mediaApi")
+    public Docket mediaApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("员工接口（媒体分发）")
+                .select()
+                .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
+                .paths(PathSelectors.regex("/media.*"))
+                .build()
+                .apiInfo(apiInfo());
+    }
     @Bean("adminApi")
     public Docket adminApi() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("管理员接口")
+                .groupName("管理员接口（官网）")
                 .select()
                 .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
                 .paths(PathSelectors.regex("/admin.*"))
@@ -65,7 +74,7 @@ public class SwaggerConfig {
     @Bean("clientApi")
     public Docket clientApi() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("客户接口")
+                .groupName("客户接口（官网）")
                 .select()
                 .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
                 .paths(PathSelectors.regex("/client.*"))
@@ -98,10 +107,10 @@ public class SwaggerConfig {
     @Bean("loginApi")
     public Docket loginApi() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("登陆接口")
+                .groupName("登陆接口（官网）")
                 .select()
                 .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
-                .paths(PathSelectors.regex("/login.*"))
+                .paths(PathSelectors.regex("/account.*"))
                 .build()
                 .apiInfo(apiInfo());
     }
@@ -109,7 +118,7 @@ public class SwaggerConfig {
     @Bean("uploadApi")
     public Docket uploadApi() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("图片上传接口")
+                .groupName("图片上传接口（综合）")
                 .select()
                 .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
                 .paths(PathSelectors.regex("/picture.*"))
@@ -128,7 +137,7 @@ public class SwaggerConfig {
                 .description("所有的接口都在这里了~")
                 .termsOfServiceUrl("http://localhost:9090")
                 .contact(new Contact("Hocassian", "https://Hocassian.cn", "hokaso@qq.com"))
-                .version("v1.0.2")
+                .version("v1.1.2")
                 .build();
     }
 

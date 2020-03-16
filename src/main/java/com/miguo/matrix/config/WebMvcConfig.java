@@ -1,5 +1,6 @@
 package com.miguo.matrix.config;
 
+import com.miguo.matrix.interceptor.UserInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringBootConfiguration;
@@ -19,6 +20,11 @@ import java.util.Collections;
 @EnableWebMvc
 @SpringBootConfiguration
 public class WebMvcConfig implements WebMvcConfigurer {
+
+    @Autowired
+    private UserInterceptor userInterceptor;
+
+
     @Value("${file.path}")
     private String filePath;
 
@@ -37,8 +43,17 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return new MappingJackson2HttpMessageConverter();
     }
 
+
+
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry){
+        registry.addInterceptor(userInterceptor).addPathPatterns("/staff/**");
+        registry.addInterceptor(userInterceptor).addPathPatterns("/staff_miniprogram/**");
+        registry.addInterceptor(userInterceptor).addPathPatterns("/admin/**");
     }
 
     @Override

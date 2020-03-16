@@ -3,7 +3,6 @@ package com.miguo.matrix.controller;
 import com.miguo.matrix.dto.PageResult;
 import com.miguo.matrix.dto.Result;
 import com.miguo.matrix.dto.SearchDto;
-import com.miguo.matrix.dto.staff.UpdatePasswordDto;
 import com.miguo.matrix.entity.client.Article;
 import com.miguo.matrix.entity.client.Swiper;
 import com.miguo.matrix.entity.client.Video;
@@ -21,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.util.Optional;
 
 /**
  * @author Hocassian

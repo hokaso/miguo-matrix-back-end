@@ -4,10 +4,10 @@ logging:
 server:
   port: 9090
   address:
-#  ssl:
-#    key-store: classpath:migotimes.com.jks
-#    key-store-password: gKFtOquzlR
-#    keyStoreType: JKS
+  ssl:
+    key-store: classpath:migotimes.com.jks
+    key-store-password: gKFtOquzlR
+    keyStoreType: JKS
 
 spring:
   datasource:
