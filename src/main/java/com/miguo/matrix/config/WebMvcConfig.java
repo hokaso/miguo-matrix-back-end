@@ -43,8 +43,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return new MappingJackson2HttpMessageConverter();
     }
 
-
-
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
     }

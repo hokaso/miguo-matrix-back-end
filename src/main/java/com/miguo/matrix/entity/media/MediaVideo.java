@@ -31,6 +31,10 @@ public class MediaVideo extends BaseEntity {
     @ApiModelProperty("视频链接")
     private String videoUrl;
 
+    @Column(name = "video_cid")
+    @ApiModelProperty("视频cid")
+    private String videoCid;
+
     @Column(name = "video_title")
     @ApiModelProperty("视频标题")
     private String videoTitle;
@@ -42,6 +46,10 @@ public class MediaVideo extends BaseEntity {
     @Column(name = "video_pic")
     @ApiModelProperty("视频封面")
     private String videoPic;
+
+    @Column(name = "video_author")
+    @ApiModelProperty("创作团队")
+    private String videoAuthor;
 
     @Column(name = "video_status")
     @ApiModelProperty("状态")
@@ -58,4 +66,8 @@ public class MediaVideo extends BaseEntity {
     @Column(name = "video_reviewer")
     @ApiModelProperty("视频审核人")
     private String videoReviewer;
+
+    @Column(name = "video_path")
+    @ApiModelProperty("视频本地路径")
+    private String videoPath;
 }

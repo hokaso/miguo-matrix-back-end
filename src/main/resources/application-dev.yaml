@@ -12,6 +12,7 @@ spring:
     password: Hechenghan1234
     host: localhost
     virtual-host: /upload
+    durable: true
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/miguo_matrix?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8&useSSL=false
     username: root

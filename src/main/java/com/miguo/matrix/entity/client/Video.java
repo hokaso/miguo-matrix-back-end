@@ -33,6 +33,10 @@ public class Video extends BaseEntity {
     @ApiModelProperty("视频链接")
     private String videoUrl;
 
+    @Column(name = "video_cid")
+    @ApiModelProperty("视频cid")
+    private String videoCid;
+
     @Column(name = "video_title")
     @ApiModelProperty("视频标题")
     private String videoTitle;
