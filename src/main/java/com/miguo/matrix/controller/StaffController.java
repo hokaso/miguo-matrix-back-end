@@ -50,7 +50,7 @@ public class StaffController {
 
     @ApiOperation("获取当前员工信息")
     @PostMapping("/account/find_one")
-    public Result<Account> findOneStaff(@RequestBody String a){
+    public Result<Account> findOneStaff(String a){
         Result<Account> result = new Result<>();
         try {
             Account account = accountService.findOne((String) session.getAttribute("user"));

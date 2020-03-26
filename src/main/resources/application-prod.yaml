@@ -6,10 +6,17 @@ server:
   address:
   ssl:
     key-store: classpath:migotimes.com.jks
-    key-store-password: gKFtOquzlR
+    key-store-password: 14756900
     keyStoreType: JKS
 
 spring:
+  rabbitmq:
+    port: 5672
+    username: Hocassian
+    password: Hechenghan1234
+    host: localhost
+    virtual-host: /upload
+    durable: true
   datasource:
     url: jdbc:mysql://localhost:3306/miguo_matrix?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
     username: root
@@ -20,4 +27,4 @@ spring:
       ddl-auto: update
     database-platform: org.hibernate.dialect.MySQL5Dialect
 file:
-  path:
+  path: /home/ubuntu/migo_back_end/file/

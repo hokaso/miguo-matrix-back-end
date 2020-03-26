@@ -68,7 +68,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                     .addResourceLocations("file:D:/File/test/");
         } else { // linux 和mac
             registry.addResourceHandler("/file/**")
-                    .addResourceLocations("file:" + filePath + "/");
+                    .addResourceLocations("file:./file/");
         }
     }
 

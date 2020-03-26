@@ -1,6 +1,6 @@
 package com.miguo.matrix.repository.miniprogram;
 
-import com.miguo.matrix.entity.miniprogram.Swiper;
+import com.miguo.matrix.entity.miniprogram.MpSwiper;
 import com.miguo.matrix.vo.miniprogram.SwiperVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +14,7 @@ import java.util.List;
  * @author Hocassian
  */
 @Repository
-public interface MpSwiperRepository extends JpaRepository<Swiper,String> {
+public interface MpSwiperRepository extends JpaRepository<MpSwiper,String> {
 
     /**
      * 分页查找所有标题或者内容包含该关键字且未被软删除的活动（录入活动页面用,「keywords」为空时返回所有）
@@ -33,7 +33,7 @@ public interface MpSwiperRepository extends JpaRepository<Swiper,String> {
             "g.swiperName," +
             "g.swiperPic," +
             "a.activityName) " +
-            "FROM Swiper g " +
+            "FROM MpSwiper g " +
             "LEFT JOIN Activity a ON g.activityId=a.id WHERE g.swiperName LIKE %:#{#keywords}%")
     Page<SwiperVo> findSwiperByKeywords(String keywords, Pageable pageable);
 
@@ -42,7 +42,7 @@ public interface MpSwiperRepository extends JpaRepository<Swiper,String> {
      * @param id
      * @return
      */
-    Swiper findSwiperById(String id);
+    MpSwiper findSwiperById(String id);
 
     /**
      * 通过id找激活的投票对象
@@ -50,5 +50,5 @@ public interface MpSwiperRepository extends JpaRepository<Swiper,String> {
      * @return
      */
     @Query(value = "select * from vote_swipers WHERE activity_id = :#{#id}",nativeQuery = true)
-    List<Swiper> findActiveSwiper(String id);
+    List<MpSwiper> findActiveSwiper(String id);
 }

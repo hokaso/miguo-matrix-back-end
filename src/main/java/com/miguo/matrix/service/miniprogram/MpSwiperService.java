@@ -1,6 +1,6 @@
 package com.miguo.matrix.service.miniprogram;
 
-import com.miguo.matrix.entity.miniprogram.Swiper;
+import com.miguo.matrix.entity.miniprogram.MpSwiper;
 import com.miguo.matrix.repository.miniprogram.MpSwiperRepository;
 import com.miguo.matrix.utils.SnowflakeIdWorker;
 import com.miguo.matrix.vo.miniprogram.SwiperVo;
@@ -34,17 +34,17 @@ public class MpSwiperService {
     @Autowired
     private HttpSession session;
 
-    public void add(Swiper swiper){
-        swiper.setCreateAt(new Date());
-        swiper.setUpdateAt(new Date());
-        swiper.setId(snowflakeIdWorker.nextId());
-        swiper.setIsDel(false);
-        swiper.setCreateBy((String) session.getAttribute("user"));
-        swiper.setUpdateBy((String) session.getAttribute("user"));
-        swiperRepository.save(swiper);
+    public void add(MpSwiper mpSwiper){
+        mpSwiper.setCreateAt(new Date());
+        mpSwiper.setUpdateAt(new Date());
+        mpSwiper.setId(snowflakeIdWorker.nextId());
+        mpSwiper.setIsDel(false);
+        mpSwiper.setCreateBy((String) session.getAttribute("user"));
+        mpSwiper.setUpdateBy((String) session.getAttribute("user"));
+        swiperRepository.save(mpSwiper);
     }
 
-    public void delete(List<Swiper> list){
+    public void delete(List<MpSwiper> list){
         swiperRepository.deleteInBatch(list);
     }
 
@@ -54,20 +54,20 @@ public class MpSwiperService {
         return swiperRepository.findSwiperByKeywords(keywords,pageable);
     }
 
-    public Swiper findOneById(String id)
+    public MpSwiper findOneById(String id)
     {
         return swiperRepository.findSwiperById(id);
     }
 
-    public void update(Swiper swiper){
-        Swiper swiperTemp=this.findOneById(swiper.getId());
-        BeanUtils.copyProperties(swiper, swiperTemp);
-        swiperTemp.setUpdateBy((String) session.getAttribute("user"));
-        swiperTemp.setUpdateAt(new Date());
-        swiperRepository.saveAndFlush(swiperTemp);
+    public void update(MpSwiper mpSwiper){
+        MpSwiper mpSwiperTemp =this.findOneById(mpSwiper.getId());
+        BeanUtils.copyProperties(mpSwiper, mpSwiperTemp);
+        mpSwiperTemp.setUpdateBy((String) session.getAttribute("user"));
+        mpSwiperTemp.setUpdateAt(new Date());
+        swiperRepository.saveAndFlush(mpSwiperTemp);
     }
 
-    public List<Swiper> findActiveOne(String id) {
+    public List<MpSwiper> findActiveOne(String id) {
         return swiperRepository.findActiveSwiper(id);
     }
 

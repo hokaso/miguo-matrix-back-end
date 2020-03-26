@@ -5,7 +5,6 @@ import com.miguo.matrix.dto.OpenIdJson;
 import com.miguo.matrix.dto.Result;
 import com.miguo.matrix.entity.miniprogram.*;
 import com.miguo.matrix.service.miniprogram.*;
-import com.miguo.matrix.utils.HttpUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -112,9 +110,9 @@ public class ClientMiniProgramController {
 
     @ApiOperation("查找活躍的轮播图")
     @GetMapping("/swiper/find_active")
-    public Result<List<Swiper>> findActiveSwiper(String id) {
-        Result<List<Swiper>> result = new Result<>();
-        List<Swiper> list;
+    public Result<List<MpSwiper>> findActiveSwiper(String id) {
+        Result<List<MpSwiper>> result = new Result<>();
+        List<MpSwiper> list;
         try {
             list = swiperService.findActiveOne(id);
             result.setMessage("success").setCode(HttpStatus.OK).setData(list);
@@ -178,8 +176,8 @@ public class ClientMiniProgramController {
         Result<OpenIdJson> result = new Result<>();
         RestTemplate restTemplate = new RestTemplate();
         try{
-            String appSecret = "8e863b83209c2d589a6918b922d396c0";
-            String appId = "wx69554e9794e7394b";
+            String appSecret = "a97bc6a54fb724206c72559a79fdda34";
+            String appId = "wx9e73f89a97d87442";
             String resultTemp = "https://api.weixin.qq.com/sns/jscode2session?appid="
                     + appId + "&secret="
                     + appSecret + "&js_code="

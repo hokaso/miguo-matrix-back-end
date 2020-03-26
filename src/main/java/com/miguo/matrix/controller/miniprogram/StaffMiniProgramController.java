@@ -49,10 +49,10 @@ public class StaffMiniProgramController {
 
     @ApiOperation("小程序轮播图的添加")
     @PostMapping("/mp_swiper/add")
-    public Result<String> mpSwiperAdd(@RequestBody Swiper swiper){
+    public Result<String> mpSwiperAdd(@RequestBody MpSwiper mpSwiper){
         Result<String> result = new Result<>();
         try{
-            swiperService.add(swiper);
+            swiperService.add(mpSwiper);
             result.setCode(HttpStatus.OK).setMessage("add").setData("success");
         }catch (Exception e){
             result.setCode(HttpStatus.OK).setMessage("add").setData("fail");
@@ -62,7 +62,7 @@ public class StaffMiniProgramController {
 
     @ApiOperation("小程序轮播图的批量软删除")
     @PostMapping("/mp_swiper/delete")
-    public Result<String> mpSwiperDelete(@RequestBody List<Swiper> list) {
+    public Result<String> mpSwiperDelete(@RequestBody List<MpSwiper> list) {
         Result<String> result =new Result<>();
         try{
             swiperService.delete(list);
@@ -75,10 +75,10 @@ public class StaffMiniProgramController {
 
     @ApiOperation("小程序轮播图的更新")
     @PutMapping("/mp_swiper/update")
-    public Result<String> mpSwiperUpdate(@RequestBody Swiper swiper){
+    public Result<String> mpSwiperUpdate(@RequestBody MpSwiper mpSwiper){
         Result<String> result = new Result<>();
         try{
-            swiperService.update(swiper);
+            swiperService.update(mpSwiper);
             result.setCode(HttpStatus.OK).setMessage("update").setData("success");
         }catch (Exception e){
             result.setCode(HttpStatus.OK).setMessage("update").setData("fail");

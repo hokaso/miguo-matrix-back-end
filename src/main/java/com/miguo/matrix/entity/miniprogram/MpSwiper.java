@@ -25,7 +25,7 @@ import javax.persistence.Table;
 @Accessors(chain = true)
 @ApiModel("小程序轮播图实体")
 @Table(name = "vote_swipers")
-public class Swiper extends BaseEntity {
+public class MpSwiper extends BaseEntity {
 
     @Column(name = "activity_id")
     @ApiModelProperty("活动id")

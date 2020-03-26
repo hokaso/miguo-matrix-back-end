@@ -126,6 +126,17 @@ public class SwaggerConfig {
                 .apiInfo(apiInfo());
     }
 
+    @Bean("countApi")
+    public Docket countApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("數據統計")
+                .select()
+                .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
+                .paths(PathSelectors.regex("/count.*"))
+                .build()
+                .apiInfo(apiInfo());
+    }
+
     /**
      * 功能描述：SwaggerUI文档的基本信息
      * @author Hocassian
