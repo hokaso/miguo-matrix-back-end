@@ -2,7 +2,7 @@ logging:
   level: error
 
 server:
-  port: 9090
+  port: 443
   address:
   ssl:
     key-store: classpath:migotimes.com.jks

@@ -28,13 +28,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/client")
 public class ClientController {
-    /*
-     * 需要实现：
-     * 1.查文章(标题和正文)、视频(标题)
-     * 2.查询所有文章/视频（分页）
-     * 3.获取最新发布的4篇文章和视频
-     *
-     * */
 
     @Autowired
     private ArticleService articleService;

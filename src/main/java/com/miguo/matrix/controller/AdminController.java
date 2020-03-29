@@ -3,7 +3,6 @@ package com.miguo.matrix.controller;
 import com.miguo.matrix.dto.PageResult;
 import com.miguo.matrix.dto.Result;
 import com.miguo.matrix.dto.AdminSearchDto;
-import com.miguo.matrix.dto.staff.UpdatePasswordDto;
 import com.miguo.matrix.entity.client.Article;
 import com.miguo.matrix.entity.client.Swiper;
 import com.miguo.matrix.entity.client.Video;
@@ -21,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
