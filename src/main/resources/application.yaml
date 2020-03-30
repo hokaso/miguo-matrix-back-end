@@ -28,7 +28,7 @@ spring:
       max-file-size: 2049MB
       max-request-size: 2049MB
   profiles:
-    active: dev
+    active: prod
   main:
     allow-bean-definition-overriding: true
   http:
