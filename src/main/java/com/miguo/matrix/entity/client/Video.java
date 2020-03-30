@@ -45,6 +45,10 @@ public class Video extends BaseEntity {
     @ApiModelProperty("视频简介")
     private String videoProfile;
 
+    @Column(name = "video_cover")
+    @ApiModelProperty("视频封面（横屏封面）")
+    private String videoCover;
+
     @Column(name = "video_pic")
     @ApiModelProperty("视频封面")
     private String videoPic;
