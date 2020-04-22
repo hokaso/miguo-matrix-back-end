@@ -26,7 +26,7 @@ public interface ArticleRepository extends JpaRepository<Article, String> {
      * @param pageable
      * @return
      */
-    @Query(value = "select * from client_article WHERE ( article LIKE %:#{#keywords}% OR title LIKE %:#{#keywords}% ) and is_del = false and status = 'reviewed'",nativeQuery = true)
+    @Query(value = "select * from client_article WHERE ( article LIKE %:#{#keywords}% OR title LIKE %:#{#keywords}% ) and is_del = false and status = 'reviewed' order by create_at desc",nativeQuery = true)
     Page<Article> findArticleByKeywords(String keywords, Pageable pageable);
 
     /**
