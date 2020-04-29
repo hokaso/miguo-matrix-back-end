@@ -49,6 +49,6 @@ public class Activity extends BaseEntity {
 
     @Column(name = "activity_ad")
     @ApiModelProperty("活动是否展示广告")
-    private String activityAd;
+    private Boolean activityAd;
 
 }

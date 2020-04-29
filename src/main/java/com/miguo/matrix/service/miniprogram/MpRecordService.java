@@ -37,6 +37,7 @@ public class MpRecordService {
     public void add(Record record){
         record.setCreateAt(new Date());
         record.setUpdateAt(new Date());
+        record.setRecordDate(new Date());
         record.setId(snowflakeIdWorker.nextId());
         record.setIsDel(false);
         record.setCreateBy((String) session.getAttribute("user"));

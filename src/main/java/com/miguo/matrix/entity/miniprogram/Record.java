@@ -1,5 +1,6 @@
 package com.miguo.matrix.entity.miniprogram;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.miguo.matrix.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -46,6 +47,6 @@ public class Record extends BaseEntity {
 
     @Column(name = "record_date")
     @ApiModelProperty("投票时间")
-    //    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date recordDate;
 }
