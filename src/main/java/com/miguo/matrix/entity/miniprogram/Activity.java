@@ -46,4 +46,9 @@ public class Activity extends BaseEntity {
     @Column(name = "activity_share_pic")
     @ApiModelProperty("活动直播链接")
     private String activitySharePic;
+
+    @Column(name = "activity_ad")
+    @ApiModelProperty("活动是否展示广告")
+    private String activityAd;
+
 }
