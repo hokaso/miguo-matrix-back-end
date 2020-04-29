@@ -52,6 +52,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(userInterceptor).addPathPatterns("/staff/**");
         registry.addInterceptor(userInterceptor).addPathPatterns("/staff_miniprogram/**");
         registry.addInterceptor(userInterceptor).addPathPatterns("/admin/**");
+        registry.addInterceptor(userInterceptor).addPathPatterns("/count/**");
     }
 
     @Override
