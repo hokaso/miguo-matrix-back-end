@@ -2,25 +2,25 @@ logging:
   level: error
 
 server:
-  port: 443
+  port: 9090
   address:
-  ssl:
-    key-store: classpath:migotimes.com.jks
-    key-store-password: 14756900
-    keyStoreType: JKS
+#  ssl:
+#    key-store: classpath:migotimes.com.jks
+#    key-store-password:
+#    keyStoreType: JKS
 
 spring:
   rabbitmq:
     port: 5672
-    username: Hocassian
-    password: Hechenghan1234
+    username:
+    password:
     host: localhost
     virtual-host: /upload
     durable: true
   datasource:
     url: jdbc:mysql://localhost:3306/miguo_matrix?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
     username: root
-    password: b66a33eca6314e6a
+    password:
   jpa:
     show-sql: true
     hibernate:
