@@ -1,0 +1,30 @@
+logging:
+  level: error
+
+server:
+  port: 9090
+  address:
+#  ssl:
+#    key-store: classpath:migotimes.com.jks
+#    key-store-password:
+#    keyStoreType: JKS
+
+spring:
+  rabbitmq:
+    port: 5672
+    username:
+    password:
+    host: localhost
+    virtual-host: /upload
+    durable: true
+  datasource:
+    url: jdbc:mysql://localhost:3306/miguo_matrix?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+file:
+  path: /home/ubuntu/migo_back_end/file/
