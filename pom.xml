@@ -24,7 +24,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java-jwt.version>3.8.1</java-jwt.version>
-        <springfox-swagger.version>2.9.2</springfox-swagger.version>
+        <springfox-swagger.version>2.10.0</springfox-swagger.version>
         <joda-time.version>2.10.3</joda-time.version>
         <bcprov-jdk16.version>1.46</bcprov-jdk16.version>
         <docker.image.prefix>/</docker.image.prefix>
